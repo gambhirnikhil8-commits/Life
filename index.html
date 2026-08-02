@@ -436,8 +436,15 @@ P3:['Quality Control (SQC 1, SA 220)','General Auditing Principles & Responsibil
 P4:['Basic Concepts & Residential Status','Incomes not forming part of Total Income','Profits & Gains of Business or Profession','Capital Gains','Income from Other Sources','Clubbing of Income','Set-Off & Carry Forward of Losses','Deductions from GTI','Assessment of Firms & LLP','Assessment of Companies & MAT','Assessment of Trusts & Institutions','Assessment of AOP/BOI/Co-op','Tax Planning, Avoidance & Evasion','Taxation of Digital Transactions','TDS, TCS & Advance Tax','Income Tax Authorities','Assessment Procedure','Appeals & Revision','Dispute Resolution','Penalties, Offences & Prosecution','Liability in Special Cases','Miscellaneous Provisions','Transfer Pricing','Non-Resident Taxation','Double Taxation Relief','Advance Rulings','Equalisation Levy','Model Tax Conventions','Interpretation of Tax Treaties','Fundamentals of BEPS'],
 P5:['GST: Supply','GST: Charge of GST & RCM','GST: Place of Supply','GST: Exemptions','GST: Time of Supply','GST: Value of Supply','GST: Input Tax Credit','GST: Registration','GST: Tax Invoice, Credit & Debit Notes','GST: Accounts, Records & E-Way Bill','GST: Payment of Tax','GST: E-Commerce Transactions','GST: Returns','GST: Import, Export & Zero-rated','GST: Refunds','GST: Job Work','GST: Assessment & Audit','GST: Inspection, Search, Seizure & Arrest','GST: Demands & Recovery','GST: Liability in Certain Cases','GST: Offences & Penalties','GST: Appeals & Revision','GST: Advance Ruling','GST: Miscellaneous Provisions','Customs: Levy & Exemptions','Customs: Types of Duty','Customs: Classification','Customs: Valuation','Customs: Import & Export Procedures','Customs: Warehousing','Customs: Duty Drawback & Refund','Foreign Trade Policy'],
 P6:['Understanding the Case-Study Format','Corporate Laws Integration','FR Integration','AFM Integration','Audit Integration','DT Integration','IDT Integration','Strategic Cost & Performance Mgmt','Risk Management & Governance','Multidisciplinary Case Practice']};
-const DONE0=['P2-0','P2-1','P2-2','P2-3','P2-4'];
-const LEC={'P2-5':20,'P2-6':7,'P2-7':14,'P2-8':13,'P2-9':5,'P2-10':19.5,'P2-11':4};
+/* Chapter progress is keyed by a hash of the chapter's NAME, not its position,
+   so inserting or reordering chapters in a later version can never shift your ticks. */
+function hsh(t){let h=2166136261;const x=String(t).toLowerCase().replace(/[^a-z0-9]/g,'');
+  for(let i=0;i<x.length;i++){h^=x.charCodeAt(i);h=Math.imul(h,16777619)}
+  return (h>>>0).toString(36)}
+function cid(p,i){return p+'-'+hsh(CH[p][i])}
+const DONE0=[0,1,2,3,4].map(i=>cid('P2',i));
+const LEC={};(()=>{const m={P2:{5:20,6:7,7:14,8:13,9:5,10:19.5,11:4}};
+  for(const p in m)for(const i in m[p])LEC[cid(p,+i)]=m[p][i]})();
 
 const HABITS=[
  {k:'gym',e:'🏋️',n:'Gym',d:[0,1,2,3,4,5]},
@@ -765,7 +772,7 @@ function devAsk(){const g=devGuess();
     if(b.dataset.dev===g)b.style.cssText='border-color:var(--acb);background:var(--acd);color:var(--ac)'})}
 const SKEY='caf_sync';
 let SY={on:0,tok:'',gist:'',pass:'',imgs:0,dev:'',last:0,api:'https://api.github.com'};
-let syState='off',syErr='',syT=null,syMute=0,BOOT_AT=0;
+let syState='off',syErr='',syT=null,syMute=0,BOOT_AT=0,syReveal=0;
 function syLoad(){try{const v=localStorage.getItem(SKEY);if(v)SY=Object.assign(SY,JSON.parse(v))}catch(e){}
   if(!SY.dev)SY.dev=guessDevice()}
 function sySave(){try{localStorage.setItem(SKEY,JSON.stringify(SY))}catch(e){}}
@@ -810,15 +817,20 @@ async function gh(path,opt={}){
       r.status===404?'Gist not found — it may have been deleted':'GitHub said '+r.status+' '+t.slice(0,90))}
   return r.json()}
 const BKEY='caf_base';
-function snap(){try{localStorage.setItem(BKEY,JSON.stringify(D))}catch(e){}}
+/* Which tab you are on, your running timer and the save clock are this device's
+   business. They never go into the synced copy. */
+const VOLATILE=['tab','timer','updatedAt','qn'];
+function shareable(o){const c={};for(const k in o||{})if(VOLATILE.indexOf(k)<0)c[k]=o[k];return c}
+function sstr(o){return JSON.stringify(shareable(o))}
+function snap(){try{localStorage.setItem(BKEY,sstr(D))}catch(e){}}
 function baseOf(){try{const v=localStorage.getItem(BKEY);return v?JSON.parse(v):null}catch(e){return null}}
 const eq=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 /* remote = what the other device saved, base = what we last agreed on,
    local = what is on this device now. Anything we changed since base wins;
    everything else stays as the other device left it. */
 function merge3(remote,base,local){
-  const out=JSON.parse(JSON.stringify(remote||{}));
-  base=base||{};
+  const out=JSON.parse(JSON.stringify(shareable(remote)));
+  base=shareable(base||{});local=shareable(local);
   // days and chapters get field-level care — both devices often touch the same date
   ['days','syl'].forEach(k=>{
     out[k]=out[k]||{};const L=local[k]||{},B=base[k]||{};
@@ -832,7 +844,7 @@ function merge3(remote,base,local){
     out[k]=out[k]||{};const L=local[k]||{},B=base[k]||{};
     for(const id in L)if(!eq(L[id],B[id]))out[k][id]=L[id];
     for(const id in B)if(!(id in L))delete out[k][id]});
-  ['plan','timer'].forEach(k=>{if(!eq(local[k],base[k]))out[k]=local[k]});
+  if(!eq(local.plan,base.plan))out.plan=local.plan;
   if(local.name!==base.name)out.name=local.name;
   const keyOf={tasks:x=>x.id,cards:x=>x.id,gym:x=>x.d+'|'+x.ex,
     mock:x=>x.d+'|'+x.p+'|'+x.sc,wt:x=>x.d+'|'+x.w};
@@ -843,13 +855,13 @@ function merge3(remote,base,local){
     B.forEach(x=>{if(!L.some(y=>f(y)===f(x)))delete map[f(x)]});
     out[k]=Object.values(map)});
   return out}
-function payload(){const o={v:2,at:D.updatedAt||Date.now(),dev:SY.dev,data:D};
+function payload(data){const o={v:2,at:D.updatedAt||Date.now(),dev:SY.dev,data:data||shareable(D)};
   if(SY.imgs)o.vis=VIS;return o}
 async function syPush(silent){
   if(!SY.on||!SY.tok||!SY.pass)return;
   clearTimeout(syT);syT=null;syState='busy';syPaint();
   try{
-    syMute=1;
+    syMute++;
     if(SY.gist){
       let rem=null;
       try{const g=await gh('/gists/'+SY.gist);const f=g.files&&g.files['life.enc'];
@@ -858,17 +870,29 @@ async function syPush(silent){
       if(rem&&rem.data){
         const base=baseOf();
         const merged=merge3(rem.data,base,D);
-        if(!eq(merged,D)){D=Object.assign(blank(),migrate(merged));
-          if(!silent||true){shell();render()}}}}
+        if(eq(merged,shareable(rem.data))&&eq(merged,shareable(D))){
+          snap();SY.last=Date.now();sySave();syState='ok';syErr='';syPaint();
+          if(!silent)toast('Already up to date');return}
+        if(!eq(merged,shareable(D))){
+          const keep={tab:D.tab,timer:D.timer,qn:D.qn};
+          D=Object.assign(blank(),migrate(merged));
+          D.tab=keep.tab||'dash';if(keep.timer)D.timer=keep.timer;if(keep.qn)D.qn=keep.qn;
+          shell();render()}}}
     D.updatedAt=Date.now();
+    // Freeze exactly what we are sending. The base must record THIS, not whatever
+    // the app looks like once the upload finishes — an edit made mid-upload would
+    // otherwise be recorded as already-synced and then silently dropped.
+    const sent=shareable(D);
     const body=JSON.stringify({description:'Life tracker — encrypted, not readable by GitHub',
-      public:false,files:{'life.enc':{content:await encJSON(payload(),SY.pass)}}});
+      public:false,files:{'life.enc':{content:await encJSON(payload(sent),SY.pass)}}});
     const res=SY.gist?await gh('/gists/'+SY.gist,{method:'PATCH',body})
                      :await gh('/gists',{method:'POST',body});
-    SY.gist=res.id;SY.last=Date.now();sySave();save();snap();
+    SY.gist=res.id;SY.last=Date.now();sySave();save();
+    try{localStorage.setItem(BKEY,JSON.stringify(sent))}catch(e){}
     syState='ok';syErr='';syPaint();if(!silent)toast('Pushed to your private gist');
+    if(!eq(shareable(D),sent))setTimeout(()=>syQueue(),0);   // you edited while it was uploading
   }catch(e){syState='err';syErr=e.message;syPaint();if(!silent)toast('Sync failed — '+e.message)}
-  finally{syMute=0}}
+  finally{syMute--}}
 async function syPull(silent){
   if(!SY.on||!SY.tok||!SY.pass||!SY.gist)return null;
   syState='busy';syPaint();
@@ -877,16 +901,19 @@ async function syPull(silent){
     const f=g.files&&g.files['life.enc'];if(!f)throw new Error('No data file in that gist');
     let txt=f.content;
     if(f.truncated&&f.raw_url)txt=await(await fetch(f.raw_url)).text();
-    const pl=await decJSON(txt,SY.pass).catch(()=>{throw new Error('Wrong passphrase for this data')});
+    const pl=await decJSON(txt,SY.pass).catch(()=>{
+      throw new Error('That passphrase does not open this data. Nothing was changed — try another.')});
     syState='ok';syErr='';SY.last=Date.now();sySave();syPaint();
     return pl;
   }catch(e){syState='err';syErr=e.message;syPaint();if(!silent)toast('Pull failed — '+e.message);return null}}
 function adopt(pl){
-  clearTimeout(syT);syT=null;syMute=1;
-  D=Object.assign(blank(),migrate(pl.data||{}));
-  if(pl.vis)VIS=pl.vis,saveV();
-  D.updatedAt=pl.at||Date.now();save();snap();shell();render();
-  setTimeout(()=>syMute=0,50)}
+  clearTimeout(syT);syT=null;
+  quiet(()=>{
+    const keep={tab:D.tab,timer:D.timer,qn:D.qn};
+    D=Object.assign(blank(),migrate(pl.data||{}));
+    D.tab=keep.tab||'dash';if(keep.timer)D.timer=keep.timer;if(keep.qn)D.qn=keep.qn;
+    if(pl.vis)VIS=pl.vis,saveV();
+    D.updatedAt=pl.at||Date.now();save();snap();shell();render()})}
 function hasRealData(){
   return daysList().some(logged)||(D.tasks||[]).length>0||(D.cards||[]).length>0
     ||(D.gym||[]).length>0||(D.mock||[]).length>0||VIS.length>0
@@ -899,10 +926,16 @@ async function syBoot(){
   // A device with nothing on it must never win. Always take the remote copy.
   if(!hasRealData()||!baseOf()){adopt(pl);toast('Pulled your data down from sync');return}
   const merged=merge3(pl.data||{},baseOf(),D);
-  if(eq(merged,D)){snap();return}
-  syMute=1;D=Object.assign(blank(),migrate(merged));D.updatedAt=Date.now();
-  save();snap();shell();render();setTimeout(()=>syMute=0,50);
-  if(!eq(merged,pl.data))setTimeout(()=>syPush(true),700)}
+  if(eq(merged,shareable(D))){
+    if(eq(merged,shareable(pl.data)))snap();
+    else setTimeout(()=>syPush(true),300);
+    return}
+  quiet(()=>{const keep={tab:D.tab,timer:D.timer,qn:D.qn};
+    D=Object.assign(blank(),migrate(merged));
+    D.tab=keep.tab||'dash';if(keep.timer)D.timer=keep.timer;if(keep.qn)D.qn=keep.qn;
+    D.updatedAt=Date.now();save();snap();shell();render()});
+  if(!eq(merged,shareable(pl.data)))setTimeout(()=>syPush(true),700)}
+function quiet(fn){syMute++;try{return fn()}finally{syMute--}}
 function syQueue(){if(!SY.on||syMute)return;clearTimeout(syT);
   syT=setTimeout(()=>{syT=null;syPush(true)},2500)}
 let lastPull=0;
@@ -919,16 +952,21 @@ async function syRefresh(force){
   const pl=await syPull(true);
   if(!pl||!pl.data)return;
   const merged=merge3(pl.data,baseOf(),D);
-  if(eq(merged,D)){snap();return}
-  syMute=1;
-  D=Object.assign(blank(),migrate(merged));
-  D.updatedAt=Date.now();save();snap();shell();render();
-  setTimeout(()=>syMute=0,50);
+  if(eq(merged,shareable(D))){
+    if(eq(merged,shareable(pl.data)))snap();          // both sides identical — safe to record
+    else setTimeout(()=>syPush(true),300);            // we still owe the remote our extras
+    return}
+  quiet(()=>{
+    const keep={tab:D.tab,timer:D.timer,qn:D.qn};
+    D=Object.assign(blank(),migrate(merged));
+    D.tab=keep.tab||'dash';if(keep.timer)D.timer=keep.timer;if(keep.qn)D.qn=keep.qn;
+    D.updatedAt=Date.now();save();snap();shell();render()});
   toast('Updated from your '+(pl.dev||'other device'));
-  if(!eq(merged,pl.data))setTimeout(()=>syPush(true),700)}  // our side had extras — send the union back
+  if(!eq(merged,shareable(pl.data)))setTimeout(()=>syPush(true),700)}  // our side had extras — send it back
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)syRefresh()});
 addEventListener('focus',()=>syRefresh());
 setInterval(()=>{if(!document.hidden)syRefresh()},60000);
+setInterval(()=>{if(syMute&&syState!=='busy'){syMute=0}},15000);   // safety net
 
 /* ---- bedtime countdown ---- */
 let bedWarned=0;
@@ -1016,7 +1054,7 @@ function nmt(k){const h=HABITS.find(z=>z.k===k),l7=[];let miss=0,run=0;
     if(c.s==='x'||c.s==='t')continue;
     if(c.s==='n'){run++;miss=run}else break}
   return{miss,l7}}
-function sylPct(p){const n=CH[p].length;let c=0;for(let i=0;i<n;i++)if((D.syl[p+'-'+i]||{}).st==='done')c++;return{c,n,p:n?c/n:0}}
+function sylPct(p){const n=CH[p].length;let c=0;for(let i=0;i<n;i++)if((D.syl[cid(p,i)]||{}).st==='done')c++;return{c,n,p:n?c/n:0}}
 function meals(d){return D.meals[d]||[]}
 function macros(d){return meals(d).reduce((a,m)=>({kcal:a.kcal+m.kcal*m.q,p:a.p+m.p*m.q,c:a.c+m.c*m.q,f:a.f+m.f*m.q}),{kcal:0,p:0,c:0,f:0})}
 
@@ -1038,7 +1076,7 @@ function shell(){
   $('#nav').innerHTML=TABS.map(([k,n,p])=>`<button class="nv${D.tab===k?' on':''}" data-t="${k}"><svg viewBox="0 0 24 24">${p}</svg>${n}</button>`).join('');
   $('#btm').innerHTML=TABS.map(([k,n,pth])=>
     `<button class="nv${D.tab===k?' on':''}" data-t="${k}"><svg viewBox="0 0 24 24">${pth}</svg>${n}</button>`).join('');
-  $$('.nv[data-t]').forEach(b=>b.onclick=()=>{D.tab=b.dataset.t;save();shell();render();
+  $$('.nv[data-t]').forEach(b=>b.onclick=()=>{D.tab=b.dataset.t;quiet(()=>save());shell();render();
     if(DEV==='phone')scrollTo({top:0,behavior:'smooth'});
     const a=$(`#btm .nv[data-t="${D.tab}"]`);if(a)a.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'})});
   $$('section').forEach(s=>s.classList.toggle('on',s.id==='s-'+D.tab));
@@ -1068,7 +1106,7 @@ function vDash(){
   const mac=macros(TODAY);
   const risk=HABITS.filter(h=>nmt(h.k).miss===1),broke=HABITS.filter(h=>nmt(h.k).miss>=2);
   const R=47,C=2*Math.PI*R,off=C*(1-(sc||0)/100);
-  const weak=[];for(const p in CH)CH[p].forEach((c,i)=>{const o=D.syl[p+'-'+i]||{};if(o.weak||(o.st==='done'&&o.conf&&o.conf<=2))weak.push([p,c,o.conf])});
+  const weak=[];for(const p in CH)CH[p].forEach((c,i)=>{const o=D.syl[cid(p,i)]||{};if(o.weak||(o.st==='done'&&o.conf&&o.conf<=2))weak.push([p,c,o.conf])});
 
   const ms=checkMilestone(),ln=lineOf(D.qn||0),tl=checkBadges();
   const ago30=addD(TODAY,-30),ago7=addD(TODAY,-7);
@@ -1209,7 +1247,7 @@ function vDash(){
   $$('[data-go]').forEach(b=>b.onclick=()=>{sylP=b.dataset.go;D.tab='syl';save();shell();render()});
   $('#qnew').onclick=()=>{D.qn=(D.qn||0)+1;save();vDash()};
   $('#roll').onclick=()=>{
-    const pool=[];for(const pk in CH)CH[pk].forEach((c,i)=>{const o=D.syl[pk+'-'+i]||{};
+    const pool=[];for(const pk in CH)CH[pk].forEach((c,i)=>{const o=D.syl[cid(pk,i)]||{};
       if(o.st==='done'&&(!o.conf||o.conf>=4))return;
       const w=o.st==='ip'?4:o.st==='redo'?4:o.conf&&o.conf<=2?3:o.st==='done'?1:2;
       for(let k=0;k<w;k++)pool.push([pk,c])});
@@ -1232,7 +1270,7 @@ function stat(e,l,v,u,n){const c=['','c2','c3','c4','c5'][statN++%5];
 /* what to study next, and whether the plan is holding */
 function studyQueue(){
   const out=[];
-  for(const pk in CH)CH[pk].forEach((c,i)=>{const id=pk+'-'+i,o=D.syl[id]||{};
+  for(const pk in CH)CH[pk].forEach((c,i)=>{const id=cid(pk,i),o=D.syl[id]||{};
     const due=(D.plan.dates||{})[id];
     if(o.st==='ip')out.push({pk,c,why:'in progress',rank:0,id});
     else if(o.st==='done'&&o.conf&&o.conf<=2)out.push({pk,c,why:'confidence '+o.conf+'/5',rank:1,id});
@@ -1516,7 +1554,7 @@ function finish(sec){clearInterval(T.iv);T.run=0;
 let sylP='P2',sylF='all',sylV='list';
 function vSyl(){
   const el=$('#s-syl'),s=sylPct(sylP);
-  let rows=CH[sylP].map((c,i)=>[i,c,syl(sylP+'-'+i)]);
+  let rows=CH[sylP].map((c,i)=>[i,c,syl(cid(sylP,i))]);
   if(sylF==='pend')rows=rows.filter(r=>r[2].st!=='done');
   if(sylF==='weak')rows=rows.filter(r=>r[2].weak||(r[2].conf&&r[2].conf<=2));
   if(sylF==='rev')rows=rows.filter(r=>r[2].st==='done'&&!r[2].r1);
@@ -1553,18 +1591,18 @@ function vSyl(){
   $$('[data-v]').forEach(b=>b.onclick=()=>{sylV=b.dataset.v;vSyl()});
   $$('[data-f]').forEach(b=>b.onclick=()=>{sylF=b.dataset.f;vSyl()});
   // in-place updates so keyboard focus is never thrown away
-  $$('[data-st]').forEach(sel=>sel.onchange=()=>{syl(sylP+'-'+sel.dataset.st).st=sel.value;save();sylHead()});
-  $$('[data-r]').forEach(b=>b.onclick=()=>{const o=syl(sylP+'-'+b.dataset.i);
+  $$('[data-st]').forEach(sel=>sel.onchange=()=>{syl(cid(sylP,+sel.dataset.st)).st=sel.value;save();sylHead()});
+  $$('[data-r]').forEach(b=>b.onclick=()=>{const o=syl(cid(sylP,+b.dataset.i));
     o[b.dataset.r]=o[b.dataset.r]?0:1;b.classList.toggle('on',!!o[b.dataset.r]);save()});
-  $$('[data-w]').forEach(b=>b.onclick=()=>{const o=syl(sylP+'-'+b.dataset.w);o.weak=o.weak?0:1;
+  $$('[data-w]').forEach(b=>b.onclick=()=>{const o=syl(cid(sylP,+b.dataset.w));o.weak=o.weak?0:1;
     b.classList.toggle('on',!!o.weak);b.style.cssText=o.weak?'background:var(--am);border-color:var(--am)':'';save()});
-  $$('[data-cf]').forEach(b=>b.onclick=()=>{const o=syl(sylP+'-'+b.dataset.cf),k=+b.dataset.k;
+  $$('[data-cf]').forEach(b=>b.onclick=()=>{const o=syl(cid(sylP,+b.dataset.cf)),k=+b.dataset.k;
     o.conf=o.conf===k?0:k;paintConf(+b.dataset.cf);save()});
   sylKeys();
   if(sylV==='plan')wirePlan();
 }
 function planView(){
-  const items=CH[sylP].map((c,i)=>[sylP+'-'+i,c,syl(sylP+'-'+i)]).filter(r=>r[2].st!=='done');
+  const items=CH[sylP].map((c,i)=>[cid(sylP,i),c,syl(cid(sylP,i))]).filter(r=>r[2].st!=='done');
   return `<div class="card" style="margin-bottom:12px">
     <div class="eyebrow" style="margin-bottom:13px">Build the plan</div>
     <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;align-items:end">
@@ -1594,7 +1632,7 @@ function wirePlan(){
       mul=nn($('#pM').value),buf=nn($('#pB').value);
     D.plan={start:st,hrs,spd,mul,buf,lec:D.plan.lec||{},dates:{}};
     let cur=st,budget=hrs,wcount=0,bufLeft=buf;
-    CH[sylP].forEach((c,i)=>{const id=sylP+'-'+i;if(syl(id).st==='done')return;
+    CH[sylP].forEach((c,i)=>{const id=cid(sylP,i);if(syl(id).st==='done')return;
       const lh=nn(D.plan.lec[id]??LEC[id]);if(!lh)return;
       let need=lh/spd*(1+mul);
       while(need>0){if(budget<=0){cur=addD(cur,1);wcount++;
@@ -1608,7 +1646,7 @@ function wirePlan(){
   $$('.pd').forEach(i=>i.onchange=()=>{D.plan.dates=D.plan.dates||{};D.plan.dates[i.dataset.id]=i.value;save();vSyl()});
 }
 
-function paintConf(i){const o=syl(sylP+'-'+i);
+function paintConf(i){const o=syl(cid(sylP,i));
   $$(`[data-cf="${i}"]`).forEach(b=>{const k=+b.dataset.k;
     b.style.cssText=o.conf>=k?'padding:2px 7px;font-size:11.5px;font-family:var(--fm);border-color:transparent;'+
       (o.conf<=2?'background:var(--rod);color:var(--ro)':o.conf===3?'background:var(--amd);color:var(--am)':'background:var(--okd);color:var(--ok)')
@@ -1628,7 +1666,7 @@ function sylKeys(){const rows=$$('#s-syl tbody tr');if(!rows.length)return;
     if(k==='k'||k==='ArrowUp'){e.preventDefault();rowI=Math.max(0,rowI-1);mark();
       rows[rowI].scrollIntoView({block:'nearest'});return}
     if(rowI<0)return;
-    const idx=+rows[rowI].querySelector('[data-st]').dataset.st,o=syl(sylP+'-'+idx);
+    const idx=+rows[rowI].querySelector('[data-st]').dataset.st,o=syl(cid(sylP,idx));
     const setSt=v=>{o.st=v;rows[rowI].querySelector('[data-st]').value=v;save();sylHead()};
     if(k==='d'){e.preventDefault();setSt(o.st==='done'?'ns':'done')}
     else if(k==='i'){e.preventDefault();setSt('ip')}
@@ -2270,6 +2308,18 @@ function vData(){
         <button class="btn dgr" id="syOff">Turn sync off</button></div>
       ${SY.gist?`<div class="fld"><label>Gist ID <span class="mut">paste this on your other device</span></label>
         <input type="text" value="${esc(SY.gist)}" readonly onclick="this.select()"></div>`:''}
+      <div class="hr"></div>
+      <div class="rowb" style="margin-bottom:11px"><span class="eyebrow">Forgotten your details?</span>
+        <button class="btn sm" id="syShow">${syReveal?'Hide':'Show token and passphrase'}</button></div>
+      ${syReveal?`
+        <div class="fld"><label>Passphrase <span class="mut">this is the one that works</span></label>
+          <input type="text" value="${esc(SY.pass)}" readonly onclick="this.select()"></div>
+        <div class="fld" style="margin-bottom:0"><label>GitHub token</label>
+          <input type="text" value="${esc(SY.tok)}" readonly onclick="this.select()"></div>
+        <p class="mut" style="margin-top:11px">Write the passphrase down somewhere physical. If every device loses it,
+        the synced copy can never be opened again.</p>`
+        :`<p class="mut">Sync is working on this device, so whatever is stored here is correct.
+        Reveal it if you need to set up your other device.</p>`}
       <p class="mut" style="margin-bottom:10px"><b>How live it is:</b> changes go up about two seconds after you stop typing.
       The other device picks them up when you open it, switch back to its tab, or once a minute while it sits open.
       It will not interrupt you mid-sentence or during a running block — it waits.</p>
@@ -2358,6 +2408,7 @@ function vData(){
       if(pl){adopt(pl);toast('Connected and pulled your data')}else{SY.on=0;sySave()}}
     else{await syPush();snap();if(syState!=='err')toast('Sync on. Copy the gist ID onto your other device.')}
     render()};
+  if($('#syShow'))$('#syShow').onclick=()=>{syReveal=!syReveal;render()};
   if($('#devSw'))$('#devSw').onclick=()=>devSet(DEV==='phone'?'desktop':'phone');
   if($('#syUp'))$('#syUp').onclick=()=>syPush().then(render);
   if($('#syDn'))$('#syDn').onclick=async()=>{lastPull=0;const pl=await syPull();
@@ -2384,6 +2435,15 @@ function migrate(o){
     o.gym=out}
   if(Array.isArray(o.gym))o.gym.forEach(g=>{if(g&&!Array.isArray(g.sets))g.sets=[]});
   else o.gym=[];
+  // old saves keyed chapters by position (P2-5). Re-key them by name, once.
+  const oldId=/^(P[1-6])-(\d+)$/;
+  const remap=id=>{const m=oldId.exec(id);if(!m)return id;
+    const p=m[1],i=+m[2];return (CH[p]&&CH[p][i])?cid(p,i):id};
+  if(o.syl&&typeof o.syl==='object'){const nx={};
+    for(const k in o.syl)nx[remap(k)]=o.syl[k];o.syl=nx}
+  if(o.plan&&typeof o.plan==='object'){
+    ['lec','dates'].forEach(f=>{if(o.plan[f]&&typeof o.plan[f]==='object'){
+      const nx={};for(const k in o.plan[f])nx[remap(k)]=o.plan[f][k];o.plan[f]=nx}})}
   ['wt','mock','tasks','cards'].forEach(k=>{if(!Array.isArray(o[k]))o[k]=[]});
   ['days','syl','mile','meals','jr','plan','grat','rev','badges','ms'].forEach(k=>{
     if(!o[k]||typeof o[k]!=='object'||Array.isArray(o[k]))o[k]={}});
