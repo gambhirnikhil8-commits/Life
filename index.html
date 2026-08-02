@@ -313,6 +313,51 @@ body.phone .tmr{font-size:52px}
 body.phone .quo .tx{font-size:15.5px}
 body.phone input,body.phone select,body.phone textarea{font-size:16px;padding:11px 13px}
 body.phone .fld>label{font-size:13px}
+.sheet{position:fixed;inset:0;background:rgba(14,16,18,.74);backdrop-filter:blur(7px);z-index:450;
+  display:none;align-items:flex-start;justify-content:center;padding:5vh 16px;overflow-y:auto}
+.sheet.on{display:flex}
+.sheetb{width:100%;max-width:560px;background:var(--s1);border:1px solid var(--bd2);border-radius:16px;
+  padding:22px 20px;animation:rise .24s cubic-bezier(.16,1,.3,1);margin-bottom:5vh}
+.hrow3{display:flex;gap:11px;align-items:center;padding:11px 0;border-bottom:1px solid var(--bd)}
+.hrow3:last-of-type{border-bottom:none}
+.hrow3 .em{font-size:20px;width:30px;text-align:center;flex-shrink:0}
+.hrow3 .nm2{flex:1;min-width:0}
+.hrow3 .nm2 b{display:block;font-size:14.5px;font-weight:400}
+.hrow3 .nm2 span{font-size:12px;color:var(--tx3)}
+.dpick{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.dpick button{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd);background:var(--s2);
+  font-size:12px;color:var(--tx3);transition:.15s}
+.dpick button.on{background:var(--acd);border-color:var(--acb);color:var(--ac)}
+#bdBtn{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:70;
+  background:var(--s3);border:1px solid var(--bd2);color:var(--tx2);border-radius:24px;
+  padding:11px 17px;font-size:13.5px;box-shadow:0 6px 20px rgba(0,0,0,.35);transition:.16s}
+#bdBtn:hover{background:var(--s4);color:var(--tx)}
+body.phone #bdBtn{bottom:calc(86px + env(safe-area-inset-bottom))}
+#bd{position:fixed;inset:0;background:var(--bg);z-index:500;display:none;overflow-y:auto}
+#bd.on{display:block}
+.bdw{max-width:540px;margin:0 auto;padding:20px 18px calc(30px + env(safe-area-inset-bottom));
+  min-height:100dvh;display:flex;flex-direction:column}
+.bdt{display:flex;align-items:center;gap:12px;margin-bottom:22px;min-height:32px}
+.bdt .x{margin-left:auto;font-size:22px;color:var(--tx3);padding:2px 8px}
+.bdm{flex:1;display:flex;flex-direction:column;justify-content:center;padding-bottom:20px}
+#bd h3{font-size:24px;font-weight:400;letter-spacing:-.02em;line-height:1.3;margin-bottom:10px}
+#bd p{color:var(--tx2);font-size:16px;margin-bottom:15px;line-height:1.6}
+#bd p.b2{color:var(--tx);font-size:18.5px}
+#bd p.s2{font-size:14px;color:var(--tx3);margin-bottom:0}
+.bdo{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.bdo button{background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:16px 18px;
+  text-align:left;font-size:16.5px;line-height:1.4;width:100%;display:flex;gap:12px;align-items:flex-start;transition:.16s}
+.bdo button:hover{border-color:var(--acb);background:var(--s2)}
+.bdo button em{font-style:normal;font-size:18px;width:22px;flex-shrink:0}
+.bdo button small{display:block;font-size:13px;color:var(--tx3);margin-top:2px}
+.bdgo{background:var(--acd);border:1px solid var(--acb);color:var(--ac);border-radius:12px;
+  padding:15px;width:100%;font-size:16.5px;margin-top:15px}
+.bdq{font-size:20px;line-height:1.45;color:var(--ac);border-left:2px solid var(--ac);padding-left:15px;margin:17px 0}
+.bwrap{width:220px;height:220px;margin:4px auto 10px;display:flex;align-items:center;justify-content:center;position:relative}
+#bcirc{width:92px;height:92px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#5E93A8,#2C4C58);
+  border:1px solid var(--acb);transition:transform 4s cubic-bezier(.4,0,.4,1)}
+.bhalo{position:absolute;width:220px;height:220px;border-radius:50%;border:1px solid var(--bd);opacity:.5}
+.bcue{text-align:center;font-size:23px;min-height:32px}
 .ask{position:fixed;inset:0;background:rgba(14,16,18,.86);backdrop-filter:blur(7px);z-index:500;
   display:none;align-items:center;justify-content:center;padding:22px}
 .ask.on{display:flex}
@@ -391,6 +436,12 @@ body.phone .fld>label{font-size:13px}
 <section id="s-data"></section>
 </div>
 <nav class="btm" id="btm"></nav>
+<button id="bdBtn">Bad day</button>
+<div class="sheet" id="hsheet"><div class="sheetb" id="hbody"></div></div>
+<div id="bd"><div class="bdw">
+  <div class="bdt"><button id="bdBack" style="font-size:22px;color:var(--tx3);padding:2px 6px;display:none">←</button>
+    <span class="eyebrow" id="bdCrumb">Bad day</span><button class="x" id="bdX">×</button></div>
+  <div class="bdm" id="bdApp"></div></div></div>
 <div class="ask" id="ask"><div class="askb">
   <h3>Where are you using this?</h3>
   <p>It changes the layout — bigger buttons and a bottom bar on a phone. You can switch any time from the Data tab.</p>
@@ -446,7 +497,7 @@ const DONE0=[0,1,2,3,4].map(i=>cid('P2',i));
 const LEC={};(()=>{const m={P2:{5:20,6:7,7:14,8:13,9:5,10:19.5,11:4}};
   for(const p in m)for(const i in m[p])LEC[cid(p,+i)]=m[p][i]})();
 
-const HABITS=[
+const HABITS0=[
  {k:'gym',e:'🏋️',n:'Gym',d:[0,1,2,3,4,5]},
  {k:'med',e:'🧘',n:'Meditation',d:[0,1,2,3,4,5,6]},
  {k:'skAM',e:'☀️',n:'Skincare AM',d:[0,1,2,3,4,5,6]},
@@ -458,6 +509,8 @@ const HABITS=[
  {k:'stretch',e:'🤸',n:'Stretch / mobility',d:[0,1,2,3,4,5,6]},
  {k:'prot',e:'🥚',n:'Protein target',d:[0,1,2,3,4,5,6]},
  {k:'nophone',e:'📵',n:'No phone first hour',d:[0,1,2,3,4,5,6]}];
+function hab(){const h=D.habits;return (Array.isArray(h)&&h.length)?h:HABITS0}
+function newKey(){let i=1;while(hab().some(h=>h.k==='h'+i))i++;return 'h'+i}
 const PM=['Glycolic serum','Rest — moisturiser only','Salicylic serum','Rest — moisturiser only','Glycolic serum','Rest — moisturiser only','Salicylic serum'];
 const SPLIT=['Back & Biceps','Chest & Triceps','Legs','Shoulders','Chest','Legs','Rest'];
 const EX={
@@ -707,7 +760,7 @@ function tally(){
     chaps,paperDone,gymLogs:(D.gym||[]).length,gymDays:new Set((D.gym||[]).map(g=>g.d)).size,prs,
     prot:all.filter(d=>D.days[d].prot).length,gain:w.length>1?w[w.length-1].w-w[0].w:0,
     mocks:D.mock.length,mock75:D.mock.filter(m=>m.sc/m.mx>=.75).length,
-    perfect:all.filter(d=>HABITS.filter(h=>due(h,d)).every(h=>D.days[d][h.k])).length,
+    perfect:all.filter(d=>hab().filter(h=>due(h,d)).every(h=>D.days[d][h.k])).length,
     cards:cards.length,reviews:cards.reduce((a,c)=>a+(c.reps||0),0),
     tasksDone:(D.tasks||[]).filter(t=>t.done).length,
     jdays:Object.keys(D.jr||{}).filter(k=>{const j=D.jr[k];return j.win||j.learn||j.diary}).length,
@@ -859,7 +912,7 @@ function merge3(remote,base,local){
     for(const id in B)if(!(id in L))delete out[k][id]});
   if(!eq(local.plan,base.plan))out.plan=local.plan;
   if(local.name!==base.name)out.name=local.name;
-  const keyOf={tasks:x=>x.id,cards:x=>x.id,gym:x=>x.d+'|'+x.ex,
+  const keyOf={tasks:x=>x.id,cards:x=>x.id,habits:x=>x.k,gym:x=>x.d+'|'+x.ex,
     mock:x=>x.d+'|'+x.p+'|'+x.sc,wt:x=>x.d+'|'+x.w};
   Object.keys(keyOf).forEach(k=>{const f=keyOf[k];
     const L=local[k]||[],B=base[k]||[],map={};
@@ -1041,13 +1094,15 @@ function onTime(d){const x=D.days[d];if(!x||!x.sleep)return false;
   const t=bedtime(d),[a,b]=x.sleep.split(':').map(Number),[c,e]=t.split(':').map(Number);
   let m1=a*60+b,m2=c*60+e;if(m1<720)m1+=1440;if(m2<720)m2+=1440;return m1<=m2+20}
 function restDay(d){const x=D.days[d];return x&&x.rest?x.rest:''}
-function logged(d){const x=D.days[d];return !!(x&&(x.blocks||x.hours||x.sleep||x.gym||x.notes||x.topics||x.mood))}
-function habPts(d){const x=D.days[d];if(!x)return 0;let h=0;
-  if(x.gym)h+=8;if(onTime(d))h+=8;const s=slept(d);if(s>=7&&s<=8.5)h+=4;
-  if(x.med)h+=4;if(x.skAM)h+=4;if(x.skPM)h+=4;if(x.read)h+=4;if(x.stretch)h+=4;
-  if(x.prot)h+=4;if(x.nophone)h+=4;if(x.shower)h+=2;
+function logged(d){const x=D.days[d];if(!x)return false;
+  return !!(x.blocks||x.hours||x.sleep||x.wake||x.notes||x.topics||x.mood||x.rest
+    ||hab().some(h=>x[h.k]))}
+function habPts(d){const x=D.days[d];if(!x)return 0;
+  const hs=hab().filter(z=>due(z,d)),per=hs.length?38/hs.length:0;
+  let h=hs.filter(z=>x[z.k]).length*per;
+  if(onTime(d))h+=8;const s=slept(d);if(s>=7&&s<=8.5)h+=4;
   if(nn(x.water)>=8)h+=4;if(nn(x.steps)>=8000)h+=4;if(x.screen!==''&&nn(x.screen)<=2)h+=2;
-  return h}
+  return Math.round(h)}
 function score(d){const x=D.days[d];if(!logged(d))return null;const h=habPts(d);
   if(x.rest)return null;
   if(wd(d)===6&&x.blocks<6)return Math.round(h/60*100);
@@ -1066,7 +1121,7 @@ function best(){let b=0,c=0;for(const d of daysList()){if(d>TODAY)break;
 /* Habits only start counting from this date, and only on days that are
    over, that were actually used, and on which the habit was scheduled.
    Today is never a miss — the day is not finished yet. */
-function nmt(k){const h=HABITS.find(z=>z.k===k),l7=[];let miss=0,run=0;
+function nmt(k){const h=hab().find(z=>z.k===k),l7=[];let miss=0,run=0;
   for(let i=6;i>=0;i--){const d=addD(TODAY,-i);
     if(d<HAB_FROM||!due(h,d)||restDay(d)){l7.push({d,s:'x'});continue}
     const done=!!(D.days[d]||{})[k];
@@ -1127,7 +1182,7 @@ function vDash(){
   const sl=all.filter(d=>slept(d)>0),avgSl=sl.length?(sl.reduce((a,d)=>a+slept(d),0)/sl.length).toFixed(1):'0.0';
   let sylC=0,sylN=0;for(const p in CH){const s=sylPct(p);sylC+=s.c;sylN+=s.n}
   const mac=macros(TODAY);
-  const risk=HABITS.filter(h=>nmt(h.k).miss===1),broke=HABITS.filter(h=>nmt(h.k).miss>=2);
+  const risk=hab().filter(h=>nmt(h.k).miss===1),broke=hab().filter(h=>nmt(h.k).miss>=2);
   const R=47,C=2*Math.PI*R,off=C*(1-(sc||0)/100);
   const weak=[];for(const p in CH)CH[p].forEach((c,i)=>{const o=D.syl[cid(p,i)]||{};if(o.weak||(o.st==='done'&&o.conf&&o.conf<=2))weak.push([p,c,o.conf])});
 
@@ -1192,7 +1247,7 @@ function vDash(){
 
   <div class="grid g2" style="margin-bottom:12px">
     <div class="card"><div class="eyebrow" style="margin-bottom:13px">Habit consistency · last 7 days</div>
-      ${HABITS.map(h=>{const {miss,l7}=nmt(h.k);
+      ${hab().map(h=>{const {miss,l7}=nmt(h.k);
         return `<div class="hrow2"><span class="nm"><span style="font-size:15px">${h.e}</span>${h.n}</span>
         <span class="dots">${l7.map(c=>`<span class="dot ${c.s==='y'?'y':c.s==='n'?'n':c.s==='t'?'t':''}" title="${fmt(c.d)}"></span>`).join('')}</span>
         ${miss>=2?'<span class="pill p-ro">broken</span>':miss===1?'<span class="pill p-am">1 miss</span>':'<span class="pill p-ok">on</span>'}</div>`}).join('')}
@@ -1340,7 +1395,7 @@ function heat(){const box=$('#heat');if(!box)return;
 let curD=TODAY;
 function vToday(){
   const el=$('#s-today'),x=day(curD),sc=score(curD),wk=wd(curD);
-  const todayHab=HABITS.filter(h=>due(h,curD));
+  const todayHab=hab().filter(h=>due(h,curD));
   const mac=macros(curD);
   el.innerHTML=`
   <div class="rowb" style="margin-bottom:20px">
@@ -1410,7 +1465,9 @@ function vToday(){
    <div>
     <div class="card" style="margin-bottom:12px">
       <div class="rowb" style="margin-bottom:13px"><span class="eyebrow">Habits due today</span>
-        <span class="mut">${todayHab.filter(h=>x[h.k]).length}/${todayHab.length}</span></div>
+        <span style="display:flex;align-items:center;gap:9px">
+          <span class="mut">${todayHab.filter(h=>x[h.k]).length}/${todayHab.length}</span>
+          <button class="btn sm" onclick="hOpen()">Edit</button></span></div>
       <div class="chips" style="margin-bottom:15px">${todayHab.map(h=>{const m=nmt(h.k).miss;
         return `<button class="chip${x[h.k]?' ok':''}" data-h="${h.k}" title="${m>=2?'Missed twice':m===1?'Missed once — do not miss twice':''}">
         <em>${h.e}</em>${h.n}${!x[h.k]&&m>=1?`<span class="pill ${m>=2?'p-ro':'p-am'}" style="margin-left:2px">${m}</span>`:''}</button>`}).join('')}</div>
@@ -1486,8 +1543,75 @@ function vToday(){
 let fired={};
 function fireIf(){save();
   if(curD!==TODAY)return;
-  const hs=HABITS.filter(h=>due(h,TODAY)),x=day(TODAY);
+  const hs=hab().filter(h=>due(h,TODAY)),x=day(TODAY);
   if(hs.every(h=>x[h.k])&&!fired[TODAY]){fired[TODAY]=1;celebrate();toast('Every habit done today. All of them.')}
+}
+
+/* ---- habit editor ---- */
+const DAYN=['M','T','W','T','F','S','S'];
+let hEdit=null;
+function hOpen(){hEdit=null;hDraw();$('#hsheet').classList.add('on')}
+function hClose(){$('#hsheet').classList.remove('on');render()}
+function schedLabel(h){
+  if(h.d===null)return'Every other day';
+  if(h.d.length===7)return'Every day';
+  if(h.d.length===0)return'Never';
+  return h.d.map(i=>['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i]).join(', ')}
+function hDraw(){
+  const b=$('#hbody');
+  if(hEdit){
+    const h=hEdit,isNew=!hab().some(z=>z.k===h.k);
+    b.innerHTML=`<div class="rowb" style="margin-bottom:16px"><h2 style="font-size:19px">${isNew?'New habit':'Edit habit'}</h2>
+      <button class="btn sm" id="hCancel">Cancel</button></div>
+      <div class="grid" style="grid-template-columns:76px 1fr;gap:10px;margin-bottom:4px">
+        <div class="fld" style="margin:0"><label>Icon</label>
+          <input type="text" id="hE" value="${esc(h.e)}" maxlength="4" style="text-align:center;font-size:20px"></div>
+        <div class="fld" style="margin:0"><label>Name</label>
+          <input type="text" id="hN" value="${esc(h.n)}" placeholder="Cold shower"></div></div>
+      <div class="fld"><label>When</label>
+        <div class="chips" style="margin-bottom:9px">
+          <button class="chip${h.d&&h.d.length===7?' on':''}" data-sc="all">Every day</button>
+          <button class="chip${h.d&&h.d.length===6&&h.d.indexOf(6)<0?' on':''}" data-sc="mon">Mon to Sat</button>
+          <button class="chip${h.d===null?' on':''}" data-sc="alt">Every other day</button>
+        </div>
+        <div class="dpick" id="hD">${DAYN.map((d,i)=>
+          `<button data-d="${i}" class="${h.d&&h.d.indexOf(i)>=0?'on':''}">${d}</button>`).join('')}</div>
+        <p class="mut" style="margin-top:8px">${h.d===null?'Alternates from 1 August — the app works out which days.':'Tap the days it applies to.'}</p></div>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <button class="btn pri" id="hSave" style="flex:1">Save</button>
+        ${isNew?'':'<button class="btn dgr" id="hDel">Delete</button>'}</div>`;
+    const grab=()=>{const e=$('#hE'),n=$('#hN');
+      if(e)h.e=e.value.trim()||'◦'; if(n)h.n=n.value};
+    $('#hE').oninput=grab;$('#hN').oninput=grab;
+    $('#hCancel').onclick=()=>{hEdit=null;hDraw()};
+    $$('[data-sc]').forEach(x=>x.onclick=()=>{grab();
+      h.d=x.dataset.sc==='all'?[0,1,2,3,4,5,6]:x.dataset.sc==='mon'?[0,1,2,3,4,5]:null;hDraw()});
+    $$('#hD [data-d]').forEach(x=>x.onclick=()=>{grab();
+      if(h.d===null)h.d=[];const i=+x.dataset.d,j=h.d.indexOf(i);
+      if(j<0)h.d.push(i);else h.d.splice(j,1);h.d.sort();hDraw()});
+    $('#hSave').onclick=()=>{
+      grab();h.e=(h.e||'◦').trim()||'◦';h.n=(h.n||'').trim();
+      if(!h.n)return toast('Give it a name');
+      D.habits=D.habits||JSON.parse(JSON.stringify(HABITS0));
+      const i=D.habits.findIndex(z=>z.k===h.k);
+      if(i<0)D.habits.push(h);else D.habits[i]=h;
+      save();hEdit=null;hDraw();toast('Saved')};
+    if($('#hDel'))$('#hDel').onclick=()=>{
+      if(!confirm('Delete "'+h.n+'"? Days you already logged keep their record.'))return;
+      D.habits=hab().filter(z=>z.k!==h.k);save();hEdit=null;hDraw();toast('Removed')};
+    return}
+  b.innerHTML=`<div class="rowb" style="margin-bottom:14px"><h2 style="font-size:19px">Your habits</h2>
+    <button class="btn sm" id="hDone">Done</button></div>
+    <p class="mut" style="margin-bottom:12px">Add, rename or reschedule anything. Deleting one keeps
+    the days you already logged.</p>
+    ${hab().map(h=>`<div class="hrow3"><span class="em">${h.e}</span>
+      <span class="nm2"><b>${esc(h.n)}</b><span>${schedLabel(h)}</span></span>
+      <button class="btn sm" data-he="${h.k}">Edit</button></div>`).join('')}
+    <button class="btn pri" id="hAdd" style="width:100%;margin-top:14px">+ Add a habit</button>`;
+  $('#hDone').onclick=hClose;
+  $('#hAdd').onclick=()=>{hEdit={k:newKey(),e:'◦',n:'',d:[0,1,2,3,4,5,6]};hDraw()};
+  $$('[data-he]').forEach(x=>x.onclick=()=>{
+    hEdit=JSON.parse(JSON.stringify(hab().find(z=>z.k===x.dataset.he)));hDraw()});
 }
 
 /* ---- timer ---- */
@@ -2183,7 +2307,7 @@ function vRev(){
   const rk=cur?cur.s:TODAY;const rv=D.rev[rk]=D.rev[rk]||{adj:''};
   let wins=[],drops=[],why=[];
   if(cur){
-    HABITS.forEach(h=>{const d=cur.ds.filter(x=>x<=TODAY&&due(h,x)),hit=d.filter(x=>(D.days[x]||{})[h.k]);
+    hab().forEach(h=>{const d=cur.ds.filter(x=>x<=TODAY&&due(h,x)),hit=d.filter(x=>(D.days[x]||{})[h.k]);
       if(!d.length)return;const r=hit.length/d.length;
       if(r>=0.85)wins.push(`${h.e} ${h.n} — ${hit.length}/${d.length}`);
       else if(r<0.5)drops.push(`${h.e} ${h.n} — only ${hit.length}/${d.length}`)});
@@ -2300,6 +2424,233 @@ function shareCard(w,wins,rv){
 }
 function rr(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);
   x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
+
+/* ---- bad day ---- */
+let bdStack=[],bdFeel='',bdTime='',bdT=null,bdLeft=600,bdB=null,bdPh=0,bdCy=0;
+function bdStop(){clearInterval(bdT);clearInterval(bdB);bdT=bdB=null}
+function bdGo(fn,c){bdStop();bdStack.push([fn,c]);bdDraw()}
+function bdBack(){bdStop();if(bdStack.length>1)bdStack.pop();bdDraw()}
+function bdOpen(){bdStop();bdStack=[[bdHome,'Bad day']];$('#bd').classList.add('on');bdDraw()}
+function bdClose(){bdStop();$('#bd').classList.remove('on')}
+function bdDraw(){const [fn,c]=bdStack[bdStack.length-1];
+  $('#bdCrumb').textContent=c;$('#bdBack').style.display=bdStack.length>1?'block':'none';
+  const a=$('#bdApp');a.innerHTML='';const d=document.createElement('div');d.className='stg';
+  a.appendChild(d);fn(d)}
+function bdHome(el){
+  el.innerHTML=`<h3>What's going on right now?</h3>
+  <p>Pick the closest one. It doesn't have to be exact.</p>
+  <div class="bdo">
+    <button data-b="urge"><em>🌊</em><span>The urge is here<small>Haven't yet, but I want to</small></span></button>
+    <button data-b="slip"><em>↺</em><span>I slipped<small>Grindr, porn, hours gone</small></span></button>
+    <button data-b="spiral"><em>◍</em><span>It's all too much<small>Overwhelmed, can't start anything</small></span></button>
+    <button data-b="tools"><em>⌘</em><span>Just give me something to do<small>Breathing, the aim, other tools</small></span></button>
+    <button data-b="true"><em>✓</em><span>Remind me what's true<small>No steps, just the list</small></span></button>
+  </div>`;
+  const m={urge:[bdUrge,'The urge'],slip:[bdSlip,'Slipped'],spiral:[bdSp1,'Too much'],
+           tools:[bdTools,'Tools'],true:[bdTrue,'True']};
+  el.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>bdGo(...m[b.dataset.b]));}
+function bdTools(el){
+  el.innerHTML=`<h3>Something to do with your hands and lungs.</h3>
+  <p>None of these are clever. They just take the space the urge wants.</p>
+  <div class="bdo">
+    <button data-t="br"><em>◯</em><span>Box breathing<small>Four in, four hold, four out, four hold</small></span></button>
+    <button data-t="aim"><em>✦</em><span>What I'm aiming for<small>The actual reason</small></span></button>
+    <button data-t="fw"><em>⏩</em><span>Play it forward<small>What this looks like in twenty minutes</small></span></button>
+    <button data-t="rm"><em>⇱</em><span>Change the room<small>Geography, not willpower</small></span></button>
+    <button data-t="wt"><em>⏱</em><span>Ten minute wait<small>Just sit it out</small></span></button></div>`;
+  const m={br:[bdBreathe,'Breathing'],aim:[bdAim,'The aim'],fw:[bdFwd,'Forward'],
+           rm:[bdRoom,'Change the room'],wt:[bdTimer,'Ten minutes']};
+  el.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>bdGo(...m[b.dataset.t]));}
+function bdBreathe(el){
+  bdPh=0;bdCy=0;
+  el.innerHTML=`<h3 style="text-align:center;margin-bottom:2px">Box breathing</h3>
+  <p style="text-align:center;margin-bottom:8px">Follow the circle. Nose in, mouth out.</p>
+  <div class="bwrap"><div class="bhalo"></div><div id="bdCirc"></div></div>
+  <div class="bcue" id="bdCue">Breathe in</div>
+  <p class="s2" style="text-align:center;margin-top:4px" id="bdSub">Round 1</p>
+  <button class="bdgo" id="bdFin">I'm alright</button>`;
+  const cues=[['Breathe in',2.1],['Hold',2.1],['Breathe out',1],['Hold',1]];
+  const step=()=>{const c=$('#bdCirc');if(!c){bdStop();return}
+    const[t,sc]=cues[bdPh];$('#bdCue').textContent=t;c.style.transform='scale('+sc+')';
+    $('#bdSub').textContent='Round '+(bdCy+1)+(bdCy>=3?' — you can stop whenever':'');
+    bdPh++;if(bdPh>3){bdPh=0;bdCy++}};
+  step();clearInterval(bdB);bdB=setInterval(step,4000);
+  $('#bdFin').onclick=()=>bdGo(bdAfter,'Done');}
+function bdAim(el){
+  const pins=(VIS||[]).filter(v=>v.cap).slice(0,4);
+  el.innerHTML=`<h3>This is what it's for.</h3>
+  <div style="background:linear-gradient(150deg,#2A3A42,#262A2E 60%);border:1px solid var(--acb);
+    border-radius:15px;padding:20px 18px;margin-bottom:14px">
+    <p style="color:var(--tx);font-size:17px;margin:0">A delightful country in Europe. Accordions,
+    and that whole feeling of joy. You, cute and jumpy and alive.</p>
+    <p style="color:var(--tx);font-size:17px;margin:11px 0 0">A pretty house. A cute car.
+    You wake up next to him. He comes back to you at night.</p>
+    <p style="color:var(--ac);font-size:15px;margin:11px 0 0">And the line you actually wrote:
+    <i>"he just has to stick with me and hold me all close to him."</i></p>
+    ${pins.length?`<p style="color:var(--tx2);font-size:14.5px;margin:13px 0 0;
+      border-top:1px solid var(--acb);padding-top:11px">From your board — ${pins.map(v=>esc(v.cap)).join(' · ')}</p>`:''}
+  </div>
+  <p>None of it needs seventy-two kilos. Not the house, not the man who comes home.
+  You put the tollbooth there yourself.</p>
+  <p class="s2">Twenty minutes on your phone doesn't move you further from that.
+  Only the four hours afterwards do.</p>
+  <button class="bdgo">Alright</button>`;
+  el.querySelector('.bdgo').onclick=()=>bdGo(bdAfter,'Done');}
+function bdFwd(el){
+  el.innerHTML=`<h3>Play it forward.</h3>
+  <p class="b2">Twenty minutes from now, if you do it:</p>
+  <p>The noise stops for a moment. Then it comes back louder, with <i>I'm disgusting,
+  I've ruined the day</i> on top. You already know this — the relief has stopped arriving.</p>
+  <p class="b2">Twenty minutes from now, if you don't:</p>
+  <p>The wave has passed. It always passes. You're mildly proud and slightly bored,
+  which is what an ordinary evening feels like.</p>
+  <p class="s2">You're not choosing between pleasure and discipline. You're choosing
+  between feeling worse and feeling ordinary.</p>
+  <button class="bdgo">Ordinary, then</button>`;
+  el.querySelector('.bdgo').onclick=()=>bdGo(bdAfter,'Done');}
+function bdUrge(el){
+  el.innerHTML=`<h3>Name it first.</h3>
+  <p>The trigger isn't desire. It's needing the noise to stop. Finish this before you decide anything:</p>
+  <div class="bdq">"I'm not horny.<br>I'm ____."</div>
+  <div class="chips">${['Overwhelmed','Lonely','Scared about the exam',"Angry at something I didn't say",
+    'Ashamed','Exhausted','Bored','Something else'].map(f=>`<button class="chip">${f}</button>`).join('')}</div>
+  <button class="bdgo" id="bdNx" style="opacity:.4">Next</button>`;
+  el.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
+    el.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on');bdFeel=c.textContent;$('#bdNx').style.opacity=1});
+  $('#bdNx').onclick=()=>{if(bdFeel)bdGo(bdUrge2,'The urge')};}
+function bdUrge2(el){
+  el.innerHTML=`<h3>${esc(bdFeel)}.</h3>
+  <p class="b2">That's what you're reaching for it to fix. Not sex.</p>
+  <p>It won't fix it. The relief has stopped coming — you feel worse straight away now.
+  It's a habit that outlived its own payoff.</p>
+  <p>The wave passes. It always passes. Pick something to do while it does.</p>
+  <div class="bdo">
+    <button data-t="br"><em>◯</em><span>Breathe<small>Box breathing, a few rounds</small></span></button>
+    <button data-t="wt"><em>⏱</em><span>Wait ten minutes<small>Just sit it out</small></span></button>
+    <button data-t="fw"><em>⏩</em><span>Play it forward<small>What this looks like in twenty minutes</small></span></button>
+    <button data-t="aim"><em>✦</em><span>Remind me what it's for<small>The actual aim</small></span></button>
+    <button data-t="rm"><em>⇱</em><span>Change the room<small>Leave, phone stays</small></span></button></div>`;
+  const m={br:[bdBreathe,'Breathing'],wt:[bdTimer,'Ten minutes'],fw:[bdFwd,'Forward'],
+           aim:[bdAim,'The aim'],rm:[bdRoom,'Change the room']};
+  el.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>bdGo(...m[b.dataset.t]));}
+function bdTimer(el){
+  bdLeft=600;
+  el.innerHTML=`<h3 style="text-align:center;margin-bottom:4px">Ten minutes.</h3>
+  <p style="text-align:center">Put the phone down. Stand up. Leave the room if you can.</p>
+  <div class="ring" style="margin:6px auto 16px"><svg width="190" height="190">
+    <circle cx="95" cy="95" r="84" stroke="var(--s3)" stroke-width="5" fill="none"/>
+    <circle id="bdArc" cx="95" cy="95" r="84" stroke="var(--ac)" stroke-width="5" fill="none"
+      stroke-linecap="round" stroke-dasharray="527.8" stroke-dashoffset="0"
+      style="transition:stroke-dashoffset 1s linear"/></svg>
+    <div class="mid"><b id="bdCd">10:00</b><s>waiting</s></div></div>
+  <button class="btn" id="bdSk" style="width:100%">It's passed — skip ahead</button>`;
+  clearInterval(bdT);
+  bdT=setInterval(()=>{const c=$('#bdCd');if(!c){bdStop();return}
+    bdLeft--;c.textContent=Math.floor(bdLeft/60)+':'+String(bdLeft%60).padStart(2,'0');
+    $('#bdArc').style.strokeDashoffset=527.8*(1-bdLeft/600);
+    if(bdLeft<=0){bdStop();bdGo(bdAfter,'Done')}},1000);
+  $('#bdSk').onclick=()=>bdGo(bdAfter,'Done');}
+function bdRoom(el){
+  el.innerHTML=`<h3>Change the room.</h3>
+  <p class="b2">Not willpower. Geography.</p>
+  <p>The urge lives in a place — usually this one, usually with your phone in your hand.
+  You're not trying to defeat it. You're waiting somewhere else while it passes.</p>
+  <p class="s2">Kitchen. Balcony. Outside. Anywhere that isn't here. Leave the phone behind if you can.</p>
+  <button class="bdgo">Going</button>`;
+  el.querySelector('.bdgo').onclick=()=>bdGo(bdEnd,'Done');}
+function bdAfter(el){
+  el.innerHTML=`<h3>Still here?</h3>
+  <p>Either it's quieter or it isn't. Both are normal.</p>
+  <div class="bdo">
+    <button data-a="0"><em>✓</em><span>It passed<small>Go and do something ordinary</small></span></button>
+    <button data-a="1"><em>↻</em><span>Still loud<small>Try another one</small></span></button>
+    <button data-a="2"><em>↺</em><span>I did it anyway<small>Fine. Straight to the slip page.</small></span></button></div>`;
+  el.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{const a=b.dataset.a;
+    if(a==='2')bdGo(bdSlip,'Slipped');else if(a==='1')bdGo(bdUrge2,'The urge');else bdGo(bdEnd,'Done')});}
+function bdSlip(el){
+  el.innerHTML=`<h3>The slip cost you twenty minutes.</h3>
+  <p class="b2">The sentence costs the day.</p>
+  <p>You know the one. <i>It's ruined now, I'm useless, what's the point.</i>
+  That's the part that takes the week, and it's the part you can actually stop.</p>
+  <button class="bdgo">Okay — stop the sentence</button>`;
+  el.querySelector('.bdgo').onclick=()=>bdGo(bdSlip2,'Slipped');}
+function bdSlip2(el){
+  const n=new Date();n.setMinutes(n.getMinutes()+40);
+  el.innerHTML=`<h3>Say it out loud.</h3>
+  <div class="bdq">"That happened.<br>It cost me twenty minutes.<br>Next block at ____."</div>
+  <p>Fill in the blank. Actually say it — out loud beats in your head.</p>
+  <input type="time" id="bdBt" value="${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}">
+  <button class="bdgo">That's my time</button>`;
+  el.querySelector('.bdgo').onclick=()=>{bdTime=$('#bdBt').value;bdGo(bdSlip3,'Slipped')};}
+function bdSlip3(el){
+  el.innerHTML=`<h3>Three things before then.</h3>
+  <p>In this order. Tap each when it's done.</p>
+  <button class="step" data-s><span class="n">1</span><span class="lb">Leave this room
+    <small>Kitchen, balcony, outside. The room is where the loop lives.</small></span></button>
+  <button class="step" data-s><span class="n">2</span><span class="lb">Eat something. Drink water.
+    <small>You've probably done neither.</small></span></button>
+  <button class="step" data-s><span class="n">3</span><span class="lb">Sit down at ${bdTime||'your time'}
+    <small>One block. Not six. Absorbing it badly still counts.</small></span></button>
+  <button class="bdgo" id="bdDn">Done</button>
+  <button class="btn" id="bdCt" style="width:100%;margin-top:9px">I can't manage a block</button>`;
+  el.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>b.classList.toggle('done'));
+  $('#bdDn').onclick=()=>bdGo(bdEnd,'Done');
+  $('#bdCt').onclick=()=>bdGo(bdWalk,'Instead');}
+function bdWalk(el){
+  el.innerHTML=`<h3>Then walk instead.</h3>
+  <p class="b2">Take the book. Twenty minutes, outside.</p>
+  <p>That's also a real day. The walk with your book is one of the few things you do
+  that isn't for anyone. It counts more than a badly-sat block.</p>
+  <button class="bdgo">Going now</button>`;
+  el.querySelector('.bdgo').onclick=()=>bdGo(bdEnd,'Done');}
+function bdSp1(el){
+  el.innerHTML=`<h3>Too much to sort out.</h3>
+  <p class="b2">That's the trigger. Every time.</p>
+  <p>Overwhelm isn't a willpower problem, it's a <i>scope</i> problem. The field is too wide,
+  so nothing can start. The only thing that touches it is making the field smaller.</p>
+  <p>So: not your life. Not the ten months. Not even today.</p>
+  <button class="bdgo">What's the one next thing?</button>`;
+  el.querySelector('.bdgo').onclick=()=>bdGo(bdSp2,'Too much');}
+function bdSp2(el){
+  el.innerHTML=`<h3>One thing. Small enough to be certain of.</h3>
+  <p>Not "sort out my life." Something you could finish within the hour.</p>
+  <input type="text" id="bdOne" placeholder="Mergers, sums 1 to 5" autocomplete="off">
+  <div class="chips">${['Open the lecture','Walk with the book','Eat properly','Tidy the desk',
+    'Half an hour with Mum','Shower'].map(f=>`<button class="chip">${f}</button>`).join('')}</div>
+  <button class="bdgo">That's the one</button>`;
+  el.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{$('#bdOne').value=c.textContent});
+  el.querySelector('.bdgo').onclick=()=>{const v=($('#bdOne').value||'').trim()||'the next block';
+    bdGo(e=>bdSp3(e,v),'Too much')};}
+function bdSp3(el,thing){
+  el.innerHTML=`<h3>${esc(thing)}.</h3>
+  <p class="b2">That's the whole list.</p>
+  <p>Everything else waits until that's done. It isn't avoidance — it's the only way
+  the field gets small enough to move in.</p>
+  <p class="s2">Two blocks and sleeping on time makes this a real day. That's the floor,
+  and it's low on purpose.</p>
+  <button class="bdgo">Starting</button>`;
+  el.querySelector('.bdgo').onclick=()=>bdGo(bdEnd,'Done');}
+function bdTrue(el){
+  el.innerHTML=`<h3>True right now, whatever kind of day this is.</h3>
+  <ul class="tt">
+    <li>You have never once been rejected for the diagnosis. Not a single time.</li>
+    <li>Four years of medicine, essentially unbroken. Nobody watching, nobody praising you.</li>
+    <li>He knew everything and stayed nine months.</li>
+    <li>Your best-performing month was also your best-feeling month. Not your harshest.</li>
+    <li>The slip costs twenty minutes. Only the sentence costs the day.</li>
+    <li>You don't have to be finished to be allowed to live.</li>
+  </ul>
+  <button class="bdgo">Back</button>`;
+  el.querySelector('.bdgo').onclick=()=>{bdStack=[[bdHome,'Bad day']];bdDraw()};}
+function bdEnd(el){
+  el.innerHTML=`<h3>That's it.</h3>
+  <p class="b2">The day isn't ruined. It's a day with a bad hour in it.</p>
+  <p>You don't make up for this tomorrow. Tomorrow is a normal day with its own blocks.</p>
+  <button class="bdgo" id="bdCl">Close</button>
+  <button class="btn" id="bdTr" style="width:100%;margin-top:9px">Remind me what's true</button>`;
+  $('#bdCl').onclick=bdClose;
+  $('#bdTr').onclick=()=>bdGo(bdTrue,'True');}
 
 /* ---- data ---- */
 function vData(){
@@ -2473,11 +2824,14 @@ function migrate(o){
   if(o.plan&&typeof o.plan==='object'){
     ['lec','dates'].forEach(f=>{if(o.plan[f]&&typeof o.plan[f]==='object'){
       const nx={};for(const k in o.plan[f])nx[remap(k)]=o.plan[f][k];o.plan[f]=nx}})}
+  if(!Array.isArray(o.habits)||!o.habits.length)o.habits=JSON.parse(JSON.stringify(HABITS0));
+  o.habits=o.habits.filter(h=>h&&h.k&&h.n).map(h=>({k:h.k,e:h.e||'◦',n:h.n,
+    d:(h.d===null?null:(Array.isArray(h.d)?h.d:[0,1,2,3,4,5,6]))}));
   ['wt','mock','tasks','cards'].forEach(k=>{if(!Array.isArray(o[k]))o[k]=[]});
   ['days','syl','mile','meals','jr','plan','grat','rev','badges','ms'].forEach(k=>{
     if(!o[k]||typeof o[k]!=='object'||Array.isArray(o[k]))o[k]={}});
   return o}
-function blank(){return{days:{},syl:{},gym:[],wt:[],mock:[],mile:{},meals:{},jr:{},plan:{},grat:{},rev:{},tasks:[],cards:[],badges:{},ms:{},name:'THE LONG GAME',tab:'dash'}}
+function blank(){return{habits:JSON.parse(JSON.stringify(HABITS0)),days:{},syl:{},gym:[],wt:[],mock:[],mile:{},meals:{},jr:{},plan:{},grat:{},rev:{},tasks:[],cards:[],badges:{},ms:{},name:'THE LONG GAME',tab:'dash'}}
 function csv(rows){return rows.map(r=>r.map(v=>{const s=String(v??'');
   return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}).join(',')).join('\n')}
 function dl(name,text){const b=new Blob([text],{type:'text/plain;charset=utf-8'}),u=URL.createObjectURL(b);
@@ -2512,10 +2866,10 @@ function actions(){
   TABS.forEach(([k,n])=>a.push({e:'→',t:'Go to '+n,k:'tab',run:()=>{D.tab=k;save();shell();render()}}));
   for(let i=0;i<=8;i++)a.push({e:'🧱',t:`Log ${i} block${i===1?'':'s'} today`,k:'study',
     run:()=>{day(TODAY).blocks=i;save();toast(`${i} blocks logged`);if(D.tab==='today'||D.tab==='dash')render()}});
-  HABITS.filter(h=>due(h,TODAY)).forEach(h=>{const on=day(TODAY)[h.k];
+  hab().filter(h=>due(h,TODAY)).forEach(h=>{const on=day(TODAY)[h.k];
     a.push({e:h.e,t:(on?'Untick ':'Tick ')+h.n,k:'habit',
       run:()=>{const x=day(TODAY);x[h.k]=!x[h.k];save();
-        const hs=HABITS.filter(z=>due(z,TODAY));
+        const hs=hab().filter(z=>due(z,TODAY));
         if(hs.every(z=>x[z.k])&&!fired[TODAY]){fired[TODAY]=1;celebrate();toast('Every habit done today.')}
         else toast(x[h.k]?h.n+' ticked':h.n+' unticked');
         if(D.tab==='today'||D.tab==='dash')render()}})});
@@ -2549,6 +2903,8 @@ function actions(){
     run:()=>{D.tab='cards';fcMode='rev';save();shell();render()}});
   a.push({e:DEV==='phone'?'💻':'📱',t:`Switch to ${DEV==='phone'?'laptop':'phone'} layout`,k:'device',
     run:()=>devSet(DEV==='phone'?'desktop':'phone')});
+  a.push({e:'🌊',t:'Bad day — open the flow',k:'help',run:()=>bdOpen()});
+  a.push({e:'⚙',t:'Edit my habits',k:'settings',run:()=>hOpen()});
   a.push({e:'?',t:'Keyboard shortcuts',k:'help',run:()=>showKeys()});
   return a}
 function palOpen(){palA=actions();palI=0;$('#pal').classList.add('on');
@@ -2583,7 +2939,10 @@ let gPending=0;
 const GOTO={d:'dash',t:'today',s:'timer',y:'syl',g:'gym',f:'food',k:'task',v:'vis',c:'cards',m:'mock',j:'jrnl',r:'rev',x:'data'};
 document.addEventListener('keydown',e=>{
   const typing=e.target.matches('input,textarea,select');
-  if(e.key==='Escape'){if($('#pal').classList.contains('on')){palClose();return}
+  if(e.key==='Escape'){
+    if($('#bd').classList.contains('on')){bdClose();return}
+    if($('#hsheet').classList.contains('on')){hClose();return}
+    if($('#pal').classList.contains('on')){palClose();return}
     if(document.body.classList.contains('focus')){document.body.classList.remove('focus');return}}
   if($('#pal').classList.contains('on')){
     const list=$('#pl')._list||[];
@@ -2601,6 +2960,10 @@ document.addEventListener('keydown',e=>{
   if(e.key==='['&&i>0){D.tab=TABS[i-1][0];save();shell();render()}
   if(e.key===']'&&i<TABS.length-1){D.tab=TABS[i+1][0];save();shell();render()}});
 addEventListener('resize',()=>{const c=$('#cfx');if(c){c.width=innerWidth;c.height=innerHeight}});
+$('#bdBtn').onclick=bdOpen;
+$('#bdX').onclick=bdClose;
+$('#bdBack').onclick=bdBack;
+$('#hsheet').onclick=e=>{if(e.target.id==='hsheet')hClose()};
 document.addEventListener('click',e=>{if(e.target.id==='lb'||e.target.className==='cx')$('#lb').classList.remove('on');
   if(e.target.id==='pal')palClose()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#lb').classList.remove('on')});
