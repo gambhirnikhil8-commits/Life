@@ -816,7 +816,20 @@ async function gh(path,opt={}){
     throw new Error(r.status===401?'Token rejected — check it has the gist scope':
       r.status===404?'Gist not found — it may have been deleted':'GitHub said '+r.status+' '+t.slice(0,90))}
   return r.json()}
-const BKEY='caf_base';
+const BKEY='caf_base',VBKEY='caf_visbase';
+function visSnap(){try{localStorage.setItem(VBKEY,JSON.stringify(VIS.map(v=>v.id)))}catch(e){}}
+function visBase(){try{const v=localStorage.getItem(VBKEY);return v?JSON.parse(v):[]}catch(e){return[]}}
+/* Photos merge by id: anything the other device added arrives, anything you
+   added stays, anything you deleted since the last sync goes. */
+function mergeVis(rem){
+  if(!SY.imgs||!Array.isArray(rem))return false;
+  const base=visBase(),map={};
+  rem.forEach(v=>{if(v&&v.id)map[v.id]=v});
+  VIS.forEach(v=>{if(v&&v.id&&base.indexOf(v.id)<0)map[v.id]=v});
+  base.forEach(id=>{if(!VIS.some(v=>v.id===id))delete map[id]});
+  const out=Object.values(map);
+  if(JSON.stringify(out)===JSON.stringify(VIS))return false;
+  VIS=out;saveV();visSnap();return true}
 /* Which tab you are on, your running timer and the save clock are this device's
    business. They never go into the synced copy. */
 const VOLATILE=['tab','timer','updatedAt','qn'];
@@ -855,22 +868,27 @@ function merge3(remote,base,local){
     B.forEach(x=>{if(!L.some(y=>f(y)===f(x)))delete map[f(x)]});
     out[k]=Object.values(map)});
   return out}
-function payload(data){const o={v:2,at:D.updatedAt||Date.now(),dev:SY.dev,data:data||shareable(D)};
-  if(SY.imgs)o.vis=VIS;return o}
+function payload(data,keepVis){const o={v:2,at:D.updatedAt||Date.now(),dev:SY.dev,data:data||shareable(D)};
+  if(SY.imgs)o.vis=VIS;
+  else if(Array.isArray(keepVis)&&keepVis.length)o.vis=keepVis;   // preserve theirs, don't wipe it
+  return o}
 async function syPush(silent){
   if(!SY.on||!SY.tok||!SY.pass)return;
   clearTimeout(syT);syT=null;syState='busy';syPaint();
   try{
-    syMute++;
+    syMute++;let remoteVis=null;
     if(SY.gist){
       let rem=null;
       try{const g=await gh('/gists/'+SY.gist);const f=g.files&&g.files['life.enc'];
         if(f){let t=f.content;if(f.truncated&&f.raw_url)t=await(await fetch(f.raw_url)).text();
           rem=await decJSON(t,SY.pass)}}catch(e){}
+      if(rem&&rem.vis)remoteVis=rem.vis;
       if(rem&&rem.data){
+        if(mergeVis(rem.vis))render();
         const base=baseOf();
         const merged=merge3(rem.data,base,D);
-        if(eq(merged,shareable(rem.data))&&eq(merged,shareable(D))){
+        const picsSame=!SY.imgs||eq(VIS,rem.vis||[]);
+        if(picsSame&&eq(merged,shareable(rem.data))&&eq(merged,shareable(D))){
           snap();SY.last=Date.now();sySave();syState='ok';syErr='';syPaint();
           if(!silent)toast('Already up to date');return}
         if(!eq(merged,shareable(D))){
@@ -884,11 +902,12 @@ async function syPush(silent){
     // otherwise be recorded as already-synced and then silently dropped.
     const sent=shareable(D);
     const body=JSON.stringify({description:'Life tracker — encrypted, not readable by GitHub',
-      public:false,files:{'life.enc':{content:await encJSON(payload(sent),SY.pass)}}});
+      public:false,files:{'life.enc':{content:await encJSON(payload(sent,remoteVis),SY.pass)}}});
     const res=SY.gist?await gh('/gists/'+SY.gist,{method:'PATCH',body})
                      :await gh('/gists',{method:'POST',body});
     SY.gist=res.id;SY.last=Date.now();sySave();save();
     try{localStorage.setItem(BKEY,JSON.stringify(sent))}catch(e){}
+    if(SY.imgs)visSnap();
     syState='ok';syErr='';syPaint();if(!silent)toast('Pushed to your private gist');
     if(!eq(shareable(D),sent))setTimeout(()=>syQueue(),0);   // you edited while it was uploading
   }catch(e){syState='err';syErr=e.message;syPaint();if(!silent)toast('Sync failed — '+e.message)}
@@ -912,7 +931,7 @@ function adopt(pl){
     const keep={tab:D.tab,timer:D.timer,qn:D.qn};
     D=Object.assign(blank(),migrate(pl.data||{}));
     D.tab=keep.tab||'dash';if(keep.timer)D.timer=keep.timer;if(keep.qn)D.qn=keep.qn;
-    if(pl.vis)VIS=pl.vis,saveV();
+    if(pl.vis){VIS=pl.vis;saveV()}visSnap();
     D.updatedAt=pl.at||Date.now();save();snap();shell();render()})}
 function hasRealData(){
   return daysList().some(logged)||(D.tasks||[]).length>0||(D.cards||[]).length>0
@@ -925,8 +944,10 @@ async function syBoot(){
   if(!pl)return;
   // A device with nothing on it must never win. Always take the remote copy.
   if(!hasRealData()||!baseOf()){adopt(pl);toast('Pulled your data down from sync');return}
+  const gotPics=mergeVis(pl.vis);
   const merged=merge3(pl.data||{},baseOf(),D);
   if(eq(merged,shareable(D))){
+    if(gotPics)render();
     if(eq(merged,shareable(pl.data)))snap();
     else setTimeout(()=>syPush(true),300);
     return}
@@ -951,8 +972,10 @@ async function syRefresh(force){
   lastPull=Date.now();
   const pl=await syPull(true);
   if(!pl||!pl.data)return;
+  const gotPics=mergeVis(pl.vis);
   const merged=merge3(pl.data,baseOf(),D);
   if(eq(merged,shareable(D))){
+    if(gotPics){render();toast('Board updated from your '+(pl.dev||'other device'))}
     if(eq(merged,shareable(pl.data)))snap();          // both sides identical — safe to record
     else setTimeout(()=>syPush(true),300);            // we still owe the remote our extras
     return}
@@ -2324,7 +2347,7 @@ function vData(){
       The other device picks them up when you open it, switch back to its tab, or once a minute while it sits open.
       It will not interrupt you mid-sentence or during a running block — it waits.</p>
       <p class="mut">Everything is encrypted on this device before it leaves. GitHub stores an unreadable blob.
-      ${SY.imgs?'Vision board photos are included, which makes each sync much heavier.':'Vision board photos stay on each device — turn that on above if you want them synced too.'}</p>
+      ${SY.imgs?'Vision board photos are included, which makes each sync heavier. Turn this on for <b>both</b> devices, or the one with it off will not receive them.':'Vision board photos stay on this device. Turn it on here <b>and</b> on your other device if you want them shared.'}</p>
     `:`
       <p class="mut" style="margin-bottom:15px">Your data is encrypted with a passphrase only you know, then parked in a private GitHub gist.
       GitHub cannot read it. Neither can anyone else without your passphrase.</p>
@@ -2413,11 +2436,17 @@ function vData(){
   if($('#syUp'))$('#syUp').onclick=()=>syPush().then(render);
   if($('#syDn'))$('#syDn').onclick=async()=>{lastPull=0;const pl=await syPull();
     if(pl){adopt(pl);toast('Pulled the copy from '+(pl.dev||'your other device'))}};
-  if($('#syImg'))$('#syImg').onclick=()=>{SY.imgs=SY.imgs?0:1;sySave();
-    toast(SY.imgs?'Photos will sync too — pushes get heavier':'Photos stay local from now on');syPush(true);render()};
+  if($('#syImg'))$('#syImg').onclick=async()=>{SY.imgs=SY.imgs?0:1;sySave();
+    if(SY.imgs){visSnap();
+      const pl=await syPull(true);
+      if(pl&&pl.vis&&mergeVis(pl.vis))toast('Board photos pulled down');
+      else toast('Photos will sync too — pushes get heavier');
+      lastPull=0;await syPush(true)}
+    else{try{localStorage.removeItem(VBKEY)}catch(e){}toast('Photos stay local from now on')}
+    render()};
   if($('#syOff'))$('#syOff').onclick=()=>{if(!confirm('Turn sync off on this device? The gist stays where it is.'))return;
     SY={on:0,tok:'',gist:SY.gist,pass:'',imgs:0,dev:SY.dev,last:0,api:SY.api};sySave();
-    try{localStorage.removeItem(BKEY)}catch(e){}syState='off';syPaint();render();
+    try{localStorage.removeItem(BKEY);localStorage.removeItem(VBKEY)}catch(e){}syState='off';syPaint();render();
     toast('Sync off. Your data is still here.')};
   $('#rst').onclick=()=>{if(!confirm('Erase every entry? This cannot be undone.'))return;
     D=blank();VIS=[];saveV();D.tab='data';save();render();toast('Everything erased')};
