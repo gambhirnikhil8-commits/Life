@@ -1,6 +1,6 @@
 {
- "name": "The Long Game",
- "short_name": "Long Game",
+ "name": "Life Tracker",
+ "short_name": "Life",
  "description": "Study, habits, gym and life tracker",
  "start_url": "./index.html",
  "scope": "./",
