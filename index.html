@@ -47,6 +47,28 @@ header{position:sticky;top:0;z-index:50;background:rgba(31,34,37,.9);backdrop-fi
 .brand:hover .wm b{transform:translateY(-2px)}
 .brand:hover .wm b:nth-child(2n){transform:translateY(2px)}
 .brand span{font-size:11px;color:var(--tx3);font-family:var(--fm)}
+.clock{margin-left:14px;display:flex;align-items:baseline;gap:1px;font-family:var(--fm);
+  font-size:15px;color:var(--tx2);letter-spacing:.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.clock .cl2{color:var(--tx3)}
+.clock .sec{font-size:11px;color:var(--tx3);letter-spacing:0}
+.clock .co{animation:blip 2s steps(1,end) infinite}
+@keyframes blip{0%,50%{opacity:1}51%,100%{opacity:.28}}
+body.phone .clock{font-size:13.5px;margin-left:9px}
+body.phone .clock .sec{display:none}
+.rrow{display:flex;gap:11px;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd)}
+.rrow:last-of-type{border-bottom:none}
+.rrow .em{font-size:17px;width:26px;text-align:center;flex-shrink:0}
+.rrow .nm2{flex:1;min-width:0}
+.rrow .nm2 b{display:block;font-size:14px;font-weight:400}
+.rrow .nm2 span{font-size:11.5px;color:var(--tx3)}
+.rrow input[type=time]{width:104px;padding:7px 9px;font-size:13.5px;margin:0}
+.rrow.off .nm2 b,.rrow.off .em{opacity:.4}
+.tgl{width:42px;height:24px;border-radius:14px;background:var(--s3);border:1px solid var(--bd);
+  position:relative;flex-shrink:0;transition:.18s}
+.tgl i{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;
+  background:var(--tx3);transition:.18s}
+.tgl.on{background:var(--acd);border-color:var(--acb)}
+.tgl.on i{left:21px;background:var(--ac)}
 @keyframes drop{from{opacity:0;transform:translateY(-9px)}to{opacity:1;transform:none}}
 nav{display:flex;gap:1px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
 nav::-webkit-scrollbar{display:none}
@@ -415,6 +437,7 @@ body.phone #bdBtn{bottom:calc(86px + env(safe-area-inset-bottom))}
 <canvas id="cfx"></canvas>
 <header><div class="wrap hd">
 <div class="brand" id="brand" title="Click to rename"><span class="wm" id="wm"></span><span id="hdDate">—</span></div>
+<span class="clock" id="clk"></span>
 <div class="bed" id="bed" style="margin-left:14px"></div>
 <div class="syn" id="syn" style="margin-left:10px"></div>
 <nav id="nav"></nav>
@@ -480,7 +503,7 @@ const TGT={kcal:2800,p:125,c:395,f:78};
 const PAPERS={P1:{n:'Financial Reporting',s:'FR',c:'--ac'},P2:{n:'Advanced Financial Mgmt',s:'AFM',c:'--am'},
  P3:{n:'Advanced Auditing',s:'Audit',c:'--ok'},P4:{n:'Direct Tax & Intl Tax',s:'DT',c:'--pu'},
  P5:{n:'Indirect Tax Laws',s:'IDT',c:'--ro'},P6:{n:'Integrated Business Solutions',s:'IBS',c:'--tx2'}};
-const CH={
+const CH0={
 P1:['Ind AS: Introduction & Framework','Ind AS 1, 34, 7 — Presentation & Cash Flows','Ind AS 115 — Revenue','Ind AS 8, 10 — Policies & Events after Reporting','Ind AS 113 — Fair Value Measurement','Ind AS 2, 16, 23 — Inventory, PPE, Borrowing Costs','Ind AS 36, 38 — Impairment, Intangibles','Ind AS 40, 105, 116 — Inv. Property, NCAHFS, Leases','Ind AS 41 — Agriculture','Ind AS 19, 37 — Employee Benefits, Provisions','Ind AS 12, 21 — Income Taxes, Forex','Ind AS 24, 33, 108 — RPT, EPS, Segments','Ind AS 32, 107, 109 — Financial Instruments','Ind AS 102 — Share Based Payment','Ind AS 101 — First-time Adoption','Ind AS 103 — Business Combinations','Ind AS 110/111/112/28 — Consolidation','Integrated Reporting','CSR Reporting','Analysis of Financial Statements'],
 P2:['Ch15 Portfolio Management','Ch16 Security Analysis','Ch17 Risk Management','Ch18 Security Valuation','Ch19 Business Valuation','Ch20 Mergers, Acquisitions & Restructuring','Ch21 Mutual Funds','Ch22 Advanced Capital Budgeting','Ch23 Derivatives Analysis & Valuation','Ch24 Interest Rate Risk Management','Ch25 Forex Exposure & Risk Mgmt','Ch26 International Financial Management','Financial Policy & Corporate Strategy','Risk Management (Theory)','Startup Finance'],
 P3:['Quality Control (SQC 1, SA 220)','General Auditing Principles & Responsibilities','Audit Planning, Strategy & Execution','Materiality, Risk Assessment & Internal Control','Audit Evidence','Completion & Review','Reporting (SA 700 series)','Specialised Areas','Related Services','Review of Financial Information','Prospective Financial Information','Digital Auditing & Assurance','Group Audits','Audit of Banks','Audit of NBFCs','Audit of PSUs','Internal Audit','Due Diligence, Investigation & Forensics','SDG & ESG Assurance','Professional Ethics & Liabilities'],
@@ -492,7 +515,15 @@ P6:['Understanding the Case-Study Format','Corporate Laws Integration','FR Integ
 function hsh(t){let h=2166136261;const x=String(t).toLowerCase().replace(/[^a-z0-9]/g,'');
   for(let i=0;i<x.length;i++){h^=x.charCodeAt(i);h=Math.imul(h,16777619)}
   return (h>>>0).toString(36)}
-function cid(p,i){return p+'-'+hsh(CH[p][i])}
+function cid(p,i){return p+'-'+hsh(CH0[p][i])}
+/* Chapters carry a stable id fixed when they are created, so renaming one
+   never loses the ticks, ratings or plan dates attached to it. */
+function chs(p){D.ch=D.ch||{};
+  if(!Array.isArray(D.ch[p])||!D.ch[p].length)
+    D.ch[p]=CH0[p].map(n=>({id:p+'-'+hsh(n),n}));
+  return D.ch[p]}
+function chCount(){let t=0;for(const k in PAPERS)t+=chs(k).length;return t}
+function newCid(p){let i=1;while(chs(p).some(c=>c.id===p+'-c'+i))i++;return p+'-c'+i}
 const DONE0=[0,1,2,3,4].map(i=>cid('P2',i));
 const LEC={};(()=>{const m={P2:{5:20,6:7,7:14,8:13,9:5,10:19.5,11:4}};
   for(const p in m)for(const i in m[p])LEC[cid(p,+i)]=m[p][i]})();
@@ -750,7 +781,7 @@ function lineOf(n){const c=lineCtx(),pool=[];
 function tally(){
   const all=daysList().filter(d=>d<=TODAY&&logged(d));
   let chaps=0,paperDone=0;
-  for(const p in CH){const q=sylPct(p);chaps+=q.c;if(q.c===q.n&&q.n)paperDone=1}
+  for(const p in PAPERS){const q=sylPct(p);chaps+=q.c;if(q.c===q.n&&q.n)paperDone=1}
   const w=[...(D.wt||[])].sort((a,b)=>a.d<b.d?-1:1);
   let prs=0;const seen={};
   [...(D.gym||[])].filter(g=>g&&Array.isArray(g.sets)).sort((a,b)=>a.d<b.d?-1:1).forEach(g=>{const m=Math.max(0,...g.sets.map(s=>nn(s.w)));
@@ -906,13 +937,13 @@ function merge3(remote,base,local){
       for(const f in b)if(!(f in l))delete m[f];
       out[k][id]=m}
     for(const id in B)if(!(id in L))delete out[k][id]});
-  ['meals','jr','grat','rev','mile','badges','ms'].forEach(k=>{
+  ['meals','jr','grat','rev','mile','badges','ms','ch'].forEach(k=>{
     out[k]=out[k]||{};const L=local[k]||{},B=base[k]||{};
     for(const id in L)if(!eq(L[id],B[id]))out[k][id]=L[id];
     for(const id in B)if(!(id in L))delete out[k][id]});
   if(!eq(local.plan,base.plan))out.plan=local.plan;
   if(local.name!==base.name)out.name=local.name;
-  const keyOf={tasks:x=>x.id,cards:x=>x.id,habits:x=>x.k,gym:x=>x.d+'|'+x.ex,
+  const keyOf={tasks:x=>x.id,cards:x=>x.id,habits:x=>x.k,rem:x=>x.id,gym:x=>x.d+'|'+x.ex,
     mock:x=>x.d+'|'+x.p+'|'+x.sc,wt:x=>x.d+'|'+x.w};
   Object.keys(keyOf).forEach(k=>{const f=keyOf[k];
     const L=local[k]||[],B=base[k]||[],map={};
@@ -1044,6 +1075,15 @@ addEventListener('focus',()=>syRefresh());
 setInterval(()=>{if(!document.hidden)syRefresh()},60000);
 setInterval(()=>{if(syMute&&syState!=='busy'){syMute=0}},15000);   // safety net
 
+/* ---- clock ---- */
+function clockTick(){const e=$('#clk');if(!e)return;
+  const d=new Date(),h=d.getHours(),m=d.getMinutes(),s=d.getSeconds();
+  const hh=h%12===0?12:h%12;
+  e.innerHTML=`${hh}<span class="co">:</span>${String(m).padStart(2,'0')}`
+    +`<span class="sec">:${String(s).padStart(2,'0')}</span>`
+    +`<span class="cl2"> ${h<12?'am':'pm'}</span>`}
+setInterval(clockTick,1000);
+
 /* ---- bedtime countdown ---- */
 let bedWarned=0;
 function bedTick(){
@@ -1132,7 +1172,8 @@ function nmt(k){const h=hab().find(z=>z.k===k),l7=[];let miss=0,run=0;
     if(c.s==='x'||c.s==='t')continue;
     if(c.s==='n'){run++;miss=run}else break}
   return{miss,l7}}
-function sylPct(p){const n=CH[p].length;let c=0;for(let i=0;i<n;i++)if((D.syl[cid(p,i)]||{}).st==='done')c++;return{c,n,p:n?c/n:0}}
+function sylPct(p){const L=chs(p),n=L.length;let c=0;
+  for(let i=0;i<n;i++)if((D.syl[L[i].id]||{}).st==='done')c++;return{c,n,p:n?c/n:0}}
 function meals(d){return D.meals[d]||[]}
 function macros(d){return meals(d).reduce((a,m)=>({kcal:a.kcal+m.kcal*m.q,p:a.p+m.p*m.q,c:a.c+m.c*m.q,f:a.f+m.f*m.q}),{kcal:0,p:0,c:0,f:0})}
 
@@ -1164,6 +1205,7 @@ function wordmark(){
   const cols=['--ac','--ok','--am','--pu','--ro'],n=(D.name||'THE LONG GAME').toUpperCase();
   $('#wm').innerHTML=[...n].map((ch,i)=>ch===' '?'<b class="sp"></b>'
     :`<b style="color:var(${cols[i%cols.length]});animation:drop .45s ${i*0.035}s backwards">${esc(ch)}</b>`).join('');
+  document.title=D.name||'THE LONG GAME';
   $('#brand').onclick=()=>{const v=prompt('Name your tracker',D.name||'THE LONG GAME');
     if(v===null)return;D.name=(v.trim()||'THE LONG GAME').slice(0,22);save();wordmark();celebrateSmall()};}
 function celebrateSmall(){$$('#wm b').forEach((b,i)=>{b.style.animation='none';void b.offsetWidth;
@@ -1180,11 +1222,12 @@ function vDash(){
   const avgS=all.length?Math.round(all.reduce((a,d)=>a+(score(d)||0),0)/all.length):0;
   const gd=all.filter(d=>D.days[d].gym).length;
   const sl=all.filter(d=>slept(d)>0),avgSl=sl.length?(sl.reduce((a,d)=>a+slept(d),0)/sl.length).toFixed(1):'0.0';
-  let sylC=0,sylN=0;for(const p in CH){const s=sylPct(p);sylC+=s.c;sylN+=s.n}
+  let sylC=0,sylN=0;for(const p in PAPERS){const s=sylPct(p);sylC+=s.c;sylN+=s.n}
   const mac=macros(TODAY);
   const risk=hab().filter(h=>nmt(h.k).miss===1),broke=hab().filter(h=>nmt(h.k).miss>=2);
   const R=47,C=2*Math.PI*R,off=C*(1-(sc||0)/100);
-  const weak=[];for(const p in CH)CH[p].forEach((c,i)=>{const o=D.syl[cid(p,i)]||{};if(o.weak||(o.st==='done'&&o.conf&&o.conf<=2))weak.push([p,c,o.conf])});
+  const weak=[];for(const p in PAPERS)chs(p).forEach(ch=>{const o=D.syl[ch.id]||{};
+    if(o.weak||(o.st==='done'&&o.conf&&o.conf<=2))weak.push([p,ch.n,o.conf])});
 
   const ms=checkMilestone(),ln=lineOf(D.qn||0),tl=checkBadges();
   const ago30=addD(TODAY,-30),ago7=addD(TODAY,-7);
@@ -1325,7 +1368,7 @@ function vDash(){
   $$('[data-go]').forEach(b=>b.onclick=()=>{sylP=b.dataset.go;D.tab='syl';save();shell();render()});
   $('#qnew').onclick=()=>{D.qn=(D.qn||0)+1;save();vDash()};
   $('#roll').onclick=()=>{
-    const pool=[];for(const pk in CH)CH[pk].forEach((c,i)=>{const o=D.syl[cid(pk,i)]||{};
+    const pool=[];for(const pk in PAPERS)chs(pk).forEach(ch=>{const c=ch.n,o=D.syl[ch.id]||{};
       if(o.st==='done'&&(!o.conf||o.conf>=4))return;
       const w=o.st==='ip'?4:o.st==='redo'?4:o.conf&&o.conf<=2?3:o.st==='done'?1:2;
       for(let k=0;k<w;k++)pool.push([pk,c])});
@@ -1348,7 +1391,7 @@ function stat(e,l,v,u,n){const c=['','c2','c3','c4','c5'][statN++%5];
 /* what to study next, and whether the plan is holding */
 function studyQueue(){
   const out=[];
-  for(const pk in CH)CH[pk].forEach((c,i)=>{const id=cid(pk,i),o=D.syl[id]||{};
+  for(const pk in PAPERS)chs(pk).forEach(ch=>{const c=ch.n,id=ch.id,o=D.syl[id]||{};
     const due=(D.plan.dates||{})[id];
     if(o.st==='ip')out.push({pk,c,why:'in progress',rank:0,id});
     else if(o.st==='done'&&o.conf&&o.conf<=2)out.push({pk,c,why:'confidence '+o.conf+'/5',rank:1,id});
@@ -1547,10 +1590,185 @@ function fireIf(){save();
   if(hs.every(h=>x[h.k])&&!fired[TODAY]){fired[TODAY]=1;celebrate();toast('Every habit done today. All of them.')}
 }
 
+/* ---- chapter editor ---- */
+function cOpen(){remOpenFlag=0;cDraw();$('#hsheet').classList.add('on')}
+function cDraw(){
+  const b=$('#hbody'),L=chs(sylP);
+  b.innerHTML=`<div class="rowb" style="margin-bottom:6px">
+      <h2 style="font-size:19px">${PAPERS[sylP].n}</h2>
+      <button class="btn sm" id="cDone">Done</button></div>
+    <p class="mut" style="margin-bottom:13px">Rename anything — ticks, ratings and plan dates stay with it.
+    Add chapters your faculty covers separately, remove ones that aren't in your syllabus.</p>
+    <div class="tabs" style="margin-bottom:13px">${Object.keys(PAPERS).map(k=>
+      `<button class="tb${sylP===k?' on':''}" data-cp="${k}">${PAPERS[k].s}</button>`).join('')}</div>
+    ${L.map((c,i)=>`<div class="rrow">
+      <span class="em" style="font-family:var(--fm);font-size:11px;color:var(--tx3)">${String(i+1).padStart(2,'0')}</span>
+      <input type="text" value="${esc(c.n)}" data-cn="${c.id}" style="flex:1;margin:0;padding:8px 11px;font-size:14px">
+      <button class="btn sm" data-cu="${i}" ${i===0?'disabled style="opacity:.3"':''}>↑</button>
+      <button class="btn sm" data-cd="${i}" ${i===L.length-1?'disabled style="opacity:.3"':''}>↓</button>
+      <button class="btn sm dgr" data-cx="${c.id}" style="padding:5px 9px">×</button></div>`).join('')}
+    <div style="display:flex;gap:8px;margin-top:13px">
+      <input type="text" id="cNew" placeholder="Add a chapter to ${PAPERS[sylP].s}" style="flex:1;margin:0">
+      <button class="btn pri" id="cAdd">Add</button></div>`;
+  $('#cDone').onclick=()=>{$('#hsheet').classList.remove('on');render()};
+  $$('[data-cp]').forEach(x=>x.onclick=()=>{sylP=x.dataset.cp;cDraw()});
+  $$('[data-cn]').forEach(i=>i.onchange=()=>{
+    const c=chs(sylP).find(z=>z.id===i.dataset.cn);
+    const v=i.value.trim();if(!v){i.value=c.n;return}
+    c.n=v;save();toast('Renamed')});
+  const move=(i,j)=>{const L=chs(sylP);const t=L[i];L[i]=L[j];L[j]=t;save();cDraw()};
+  $$('[data-cu]').forEach(x=>x.onclick=()=>{const i=+x.dataset.cu;if(i>0)move(i,i-1)});
+  $$('[data-cd]').forEach(x=>x.onclick=()=>{const i=+x.dataset.cd;if(i<chs(sylP).length-1)move(i,i+1)});
+  $$('[data-cx]').forEach(x=>x.onclick=()=>{
+    const c=chs(sylP).find(z=>z.id===x.dataset.cx);
+    if(!confirm('Remove "'+c.n+'"? Anything logged against it is dropped.'))return;
+    D.ch[sylP]=chs(sylP).filter(z=>z.id!==c.id);
+    delete D.syl[c.id];
+    if(D.plan&&D.plan.dates)delete D.plan.dates[c.id];
+    if(D.plan&&D.plan.lec)delete D.plan.lec[c.id];
+    save();cDraw()});
+  const add=()=>{const v=($('#cNew').value||'').trim();if(!v)return toast('Type a chapter name');
+    chs(sylP).push({id:newCid(sylP),n:v});save();cDraw();
+    setTimeout(()=>{const n=$('#cNew');if(n)n.focus()},60)};
+  $('#cAdd').onclick=add;
+  $('#cNew').onkeydown=e=>{if(e.key==='Enter')add()};
+}
+
+/* ---- reminders ---- */
+const DAYS3=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const ICSDAY=['MO','TU','WE','TH','FR','SA','SU'];
+function remDefaults(){
+  const r=[
+   {id:'sys1',e:'🌅',n:'Morning start — block one',t:'07:00',d:[0,1,2,3,4,5,6],on:1,
+    m:'No phone yet. Open the lecture.'},
+   {id:'sys2',e:'💆',n:"Mum's session",t:'16:45',d:[0,2,4],on:1,
+    m:'Thirty minutes. One concrete skill, not advice.'},
+   {id:'sys3',e:'🏋️',n:'Gym',t:'17:30',d:[0,1,2,3,4,5],on:1,
+    m:'Shoulder stays light. Train, do not punish.'},
+   {id:'sys4',e:'📝',n:'Log the day',t:'21:30',d:[0,1,2,3,4,5,6],on:1,
+    m:'Blocks, sleep, habits. Under a minute.'},
+   {id:'sys5',e:'🌙',n:'Wind down',t:'22:30',d:[0,1,2,3,4,5,6],on:1,
+    m:'Phone out of the room. Bed soon.'},
+   {id:'sys6',e:'🔁',n:'Weekly review',t:'18:00',d:[6],on:1,
+    m:'Fifteen minutes. What worked, what is next.'}];
+  hab().forEach(h=>r.push({id:'h_'+h.k,e:h.e,n:h.n,t:'20:00',
+    d:(h.d===null?[0,1,2,3,4,5,6]:h.d.slice()),on:0,m:'',hab:h.k}));
+  return r}
+function rem(){if(!Array.isArray(D.rem)||!D.rem.length)D.rem=remDefaults();
+  // keep habit reminders in step with the habit list
+  hab().forEach(h=>{if(!D.rem.some(r=>r.hab===h.k))
+    D.rem.push({id:'h_'+h.k,e:h.e,n:h.n,t:'20:00',
+      d:(h.d===null?[0,1,2,3,4,5,6]:h.d.slice()),on:0,m:'',hab:h.k})});
+  D.rem=D.rem.filter(r=>!r.hab||hab().some(h=>h.k===r.hab));
+  return D.rem}
+let remFired={},remIv=null;
+function remBoot(){
+  try{remFired=JSON.parse(localStorage.getItem('caf_fired')||'{}')}catch(e){remFired={}}
+  if(remFired.d!==TODAY)remFired={d:TODAY,ids:[]};
+  clearInterval(remIv);remIv=setInterval(remCheck,20000);remCheck()}
+function remCheck(){
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  const now=new Date(),hm=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  if(remFired.d!==TODAY)remFired={d:TODAY,ids:[]};
+  rem().forEach(r=>{
+    if(!r.on||!r.t)return;
+    if(r.d.indexOf(wd(TODAY))<0)return;
+    if(remFired.ids.indexOf(r.id)>=0)return;
+    const[a,b]=r.t.split(':').map(Number),[c,e]=hm.split(':').map(Number);
+    const diff=(c*60+e)-(a*60+b);
+    if(diff<0||diff>3)return;                       // fire within three minutes of the time
+    if(r.hab&&(D.days[TODAY]||{})[r.hab])return;    // already ticked, stay quiet
+    try{new Notification(r.e+'  '+r.n,{body:r.m||'',tag:r.id,badge:'',silent:false})}catch(x){}
+    remFired.ids.push(r.id);
+    try{localStorage.setItem('caf_fired',JSON.stringify(remFired))}catch(x){}})}
+async function remAsk(){
+  if(!('Notification' in window))return toast('This browser cannot do notifications');
+  if(Notification.permission==='granted'){toast('Already on');return}
+  if(Notification.permission==='denied')
+    return toast('Blocked in browser settings — allow notifications for this site, then try again');
+  const p=await Notification.requestPermission();
+  if(p==='granted'){toast('Notifications on');new Notification('That worked',
+    {body:'Reminders will arrive while the app is open.'});render()}
+  else toast('Not allowed — the calendar file below still works');}
+
+/* ---- calendar export ---- */
+function pad(n){return String(n).padStart(2,'0')}
+function icsFold(l){const out=[];for(const line of l.split('\r\n')){
+  if(line.length<=74){out.push(line);continue}
+  let s=line;out.push(s.slice(0,74));s=s.slice(74);
+  while(s.length){out.push(' '+s.slice(0,73));s=s.slice(73)}}
+  return out.join('\r\n')}
+function buildICS(){
+  const now=new Date();
+  const stamp=now.getUTCFullYear()+pad(now.getUTCMonth()+1)+pad(now.getUTCDate())+'T'
+    +pad(now.getUTCHours())+pad(now.getUTCMinutes())+pad(now.getUTCSeconds())+'Z';
+  const start=TODAY.replace(/-/g,'');
+  const until=EXAM.replace(/-/g,'')+'T000000Z';
+  let o='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//'+(D.name||'The Long Game')+'//EN\r\n'
+   +'CALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\nX-WR-CALNAME:'+(D.name||'The Long Game')+'\r\n'
+   +'BEGIN:VTIMEZONE\r\nTZID:Asia/Kolkata\r\nBEGIN:STANDARD\r\nDTSTART:19700101T000000\r\n'
+   +'TZOFFSETFROM:+0530\r\nTZOFFSETTO:+0530\r\nTZNAME:IST\r\nEND:STANDARD\r\nEND:VTIMEZONE\r\n';
+  rem().filter(r=>r.on&&r.t&&r.d.length).forEach(r=>{
+    const[h,m]=r.t.split(':');
+    o+='BEGIN:VEVENT\r\n'
+     +'UID:'+r.id+'-'+start+'@longgame\r\n'
+     +'DTSTAMP:'+stamp+'\r\n'
+     +'DTSTART;TZID=Asia/Kolkata:'+start+'T'+h+m+'00\r\n'
+     +'DURATION:PT15M\r\n'
+     +'RRULE:FREQ=WEEKLY;BYDAY='+r.d.map(i=>ICSDAY[i]).join(',')+';UNTIL='+until+'\r\n'
+     +'SUMMARY:'+r.e+' '+r.n.replace(/[,;\\]/g,'')+'\r\n'
+     +'DESCRIPTION:'+(r.m||r.n).replace(/[,;\\]/g,'')+'\r\n'
+     +'BEGIN:VALARM\r\nTRIGGER:PT0M\r\nACTION:DISPLAY\r\n'
+     +'DESCRIPTION:'+(r.m||r.n).replace(/[,;\\]/g,'')+'\r\nEND:VALARM\r\n'
+     +'END:VEVENT\r\n'});
+  o+='END:VCALENDAR\r\n';
+  return icsFold(o)}
+
+/* ---- reminders sheet ---- */
+let remOpenFlag=0;
+function rOpen(){remOpenFlag=1;rDraw();$('#hsheet').classList.add('on')}
+function rDraw(){
+  const b=$('#hbody'),perm=('Notification' in window)?Notification.permission:'unsupported';
+  const list=rem();
+  const row=r=>`<div class="rrow${r.on?'':' off'}">
+    <span class="em">${r.e}</span>
+    <span class="nm2"><b>${esc(r.n)}</b><span>${r.d.length===7?'Every day':r.d.map(i=>DAYS3[i]).join(', ')||'No days'}</span></span>
+    <input type="time" value="${r.t}" data-rt="${r.id}">
+    <button class="tgl${r.on?' on':''}" data-ro="${r.id}"><i></i></button></div>`;
+  b.innerHTML=`<div class="rowb" style="margin-bottom:14px"><h2 style="font-size:19px">Reminders</h2>
+    <button class="btn sm" id="rDone">Done</button></div>
+    <div class="card" style="background:var(--s2);border:none;margin-bottom:14px">
+      <div class="rowb"><div><b style="font-weight:400">Browser notifications</b>
+        <div class="mut">${perm==='granted'?'On — but only while the app is open or in the background.'
+          :perm==='denied'?'Blocked. Allow them in your browser settings for this site.'
+          :'Off. These only fire while the app is open.'}</div></div>
+        ${perm==='granted'?'<span class="pill p-ok">on</span>':'<button class="btn sm" id="rPerm">Turn on</button>'}</div>
+      <div class="hr" style="margin:13px 0"></div>
+      <div class="rowb"><div><b style="font-weight:400">Phone and laptop alarms</b>
+        <div class="mut">Download once, open the file, add to Google Calendar. Then they arrive
+        properly — lock screen, app closed, both devices.</div></div>
+        <button class="btn pri sm" id="rIcs">Download</button></div>
+    </div>
+    <div class="eyebrow" style="margin-bottom:6px">The day</div>
+    ${list.filter(r=>!r.hab).map(row).join('')}
+    <div class="eyebrow" style="margin:18px 0 6px">One per habit</div>
+    <p class="mut" style="margin-bottom:8px">All off by default. Turn on the ones you want and set a time.
+    A habit reminder stays quiet if you have already ticked it.</p>
+    ${list.filter(r=>r.hab).map(row).join('')}`;
+  $('#rDone').onclick=()=>{remOpenFlag=0;$('#hsheet').classList.remove('on');render()};
+  if($('#rPerm'))$('#rPerm').onclick=()=>remAsk().then(rDraw);
+  $('#rIcs').onclick=()=>{dl((D.name||'reminders').toLowerCase().replace(/\s+/g,'-')+'.ics',buildICS());
+    toast('Open the file to add it to your calendar')};
+  $$('[data-rt]').forEach(i=>i.onchange=()=>{
+    const r=rem().find(x=>x.id===i.dataset.rt);r.t=i.value;save()});
+  $$('[data-ro]').forEach(t=>t.onclick=()=>{
+    const r=rem().find(x=>x.id===t.dataset.ro);r.on=r.on?0:1;save();rDraw()});
+}
+
 /* ---- habit editor ---- */
 const DAYN=['M','T','W','T','F','S','S'];
 let hEdit=null;
-function hOpen(){hEdit=null;hDraw();$('#hsheet').classList.add('on')}
+function hOpen(){remOpenFlag=0;hEdit=null;hDraw();$('#hsheet').classList.add('on')}
 function hClose(){$('#hsheet').classList.remove('on');render()}
 function schedLabel(h){
   if(h.d===null)return'Every other day';
@@ -1701,11 +1919,11 @@ function finish(sec){clearInterval(T.iv);T.run=0;
 let sylP='P2',sylF='all',sylV='list';
 function vSyl(){
   const el=$('#s-syl'),s=sylPct(sylP);
-  let rows=CH[sylP].map((c,i)=>[i,c,syl(cid(sylP,i))]);
+  let rows=chs(sylP).map((ch,i)=>[i,ch.n,syl(ch.id)]);
   if(sylF==='pend')rows=rows.filter(r=>r[2].st!=='done');
   if(sylF==='weak')rows=rows.filter(r=>r[2].weak||(r[2].conf&&r[2].conf<=2));
   if(sylF==='rev')rows=rows.filter(r=>r[2].st==='done'&&!r[2].r1);
-  el.innerHTML=`<h2>Syllabus</h2><div class="sub">Six papers, ${Object.values(CH).flat().length} chapters, three revision rounds and a confidence score each.</div>
+  el.innerHTML=`<h2>Syllabus</h2><div class="sub">Six papers, ${chCount()} chapters, three revision rounds and a confidence score each.</div>
   <div class="tabs">${Object.keys(PAPERS).map(p=>{const q=sylPct(p);
     return `<button class="tb${sylP===p?' on':''}" data-p="${p}">${PAPERS[p].s} <span class="mut">${q.c}/${q.n}</span></button>`}).join('')}
     <span style="flex:1"></span>
@@ -1714,8 +1932,10 @@ function vSyl(){
   <div class="card" style="margin-bottom:12px"><div class="rowb">
     <div><div style="font-size:16px">${PAPERS[sylP].n}</div>
       <div class="mut">${s.c} of ${s.n} done · ${Math.round(s.p*100)}%</div></div>
+    <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
     ${sylV==='list'?`<div class="chips">${[['all','All'],['pend','Pending'],['rev','Needs revision'],['weak','Shaky']].map(([k,n])=>
-      `<button class="chip${sylF===k?' on':''}" data-f="${k}">${n}</button>`).join('')}</div>`:''}</div>
+      `<button class="chip${sylF===k?' on':''}" data-f="${k}">${n}</button>`).join('')}</div>`:''}
+    <button class="btn sm" onclick="cOpen()">Edit chapters</button></div></div>
     <div class="track" style="margin-top:14px"><i style="width:${s.p*100}%;background:var(${PAPERS[sylP].c})"></i></div></div>
   ${sylV==='plan'?planView():`
   <div class="card pad0"><div class="tw">${rows.length?`<table><thead><tr><th style="width:26px"></th><th>Chapter</th>
@@ -1738,18 +1958,18 @@ function vSyl(){
   $$('[data-v]').forEach(b=>b.onclick=()=>{sylV=b.dataset.v;vSyl()});
   $$('[data-f]').forEach(b=>b.onclick=()=>{sylF=b.dataset.f;vSyl()});
   // in-place updates so keyboard focus is never thrown away
-  $$('[data-st]').forEach(sel=>sel.onchange=()=>{syl(cid(sylP,+sel.dataset.st)).st=sel.value;save();sylHead()});
-  $$('[data-r]').forEach(b=>b.onclick=()=>{const o=syl(cid(sylP,+b.dataset.i));
+  $$('[data-st]').forEach(sel=>sel.onchange=()=>{syl(chs(sylP)[+sel.dataset.st].id).st=sel.value;save();sylHead()});
+  $$('[data-r]').forEach(b=>b.onclick=()=>{const o=syl(chs(sylP)[+b.dataset.i].id);
     o[b.dataset.r]=o[b.dataset.r]?0:1;b.classList.toggle('on',!!o[b.dataset.r]);save()});
-  $$('[data-w]').forEach(b=>b.onclick=()=>{const o=syl(cid(sylP,+b.dataset.w));o.weak=o.weak?0:1;
+  $$('[data-w]').forEach(b=>b.onclick=()=>{const o=syl(chs(sylP)[+b.dataset.w].id);o.weak=o.weak?0:1;
     b.classList.toggle('on',!!o.weak);b.style.cssText=o.weak?'background:var(--am);border-color:var(--am)':'';save()});
-  $$('[data-cf]').forEach(b=>b.onclick=()=>{const o=syl(cid(sylP,+b.dataset.cf)),k=+b.dataset.k;
+  $$('[data-cf]').forEach(b=>b.onclick=()=>{const o=syl(chs(sylP)[+b.dataset.cf].id),k=+b.dataset.k;
     o.conf=o.conf===k?0:k;paintConf(+b.dataset.cf);save()});
   sylKeys();
   if(sylV==='plan')wirePlan();
 }
 function planView(){
-  const items=CH[sylP].map((c,i)=>[cid(sylP,i),c,syl(cid(sylP,i))]).filter(r=>r[2].st!=='done');
+  const items=chs(sylP).map(ch=>[ch.id,ch.n,syl(ch.id)]).filter(r=>r[2].st!=='done');
   return `<div class="card" style="margin-bottom:12px">
     <div class="eyebrow" style="margin-bottom:13px">Build the plan</div>
     <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;align-items:end">
@@ -1779,7 +1999,7 @@ function wirePlan(){
       mul=nn($('#pM').value),buf=nn($('#pB').value);
     D.plan={start:st,hrs,spd,mul,buf,lec:D.plan.lec||{},dates:{}};
     let cur=st,budget=hrs,wcount=0,bufLeft=buf;
-    CH[sylP].forEach((c,i)=>{const id=cid(sylP,i);if(syl(id).st==='done')return;
+    chs(sylP).forEach(ch=>{const id=ch.id;if(syl(id).st==='done')return;
       const lh=nn(D.plan.lec[id]??LEC[id]);if(!lh)return;
       let need=lh/spd*(1+mul);
       while(need>0){if(budget<=0){cur=addD(cur,1);wcount++;
@@ -1793,7 +2013,7 @@ function wirePlan(){
   $$('.pd').forEach(i=>i.onchange=()=>{D.plan.dates=D.plan.dates||{};D.plan.dates[i.dataset.id]=i.value;save();vSyl()});
 }
 
-function paintConf(i){const o=syl(cid(sylP,i));
+function paintConf(i){const o=syl(chs(sylP)[i].id);
   $$(`[data-cf="${i}"]`).forEach(b=>{const k=+b.dataset.k;
     b.style.cssText=o.conf>=k?'padding:2px 7px;font-size:11.5px;font-family:var(--fm);border-color:transparent;'+
       (o.conf<=2?'background:var(--rod);color:var(--ro)':o.conf===3?'background:var(--amd);color:var(--am)':'background:var(--okd);color:var(--ok)')
@@ -1813,7 +2033,7 @@ function sylKeys(){const rows=$$('#s-syl tbody tr');if(!rows.length)return;
     if(k==='k'||k==='ArrowUp'){e.preventDefault();rowI=Math.max(0,rowI-1);mark();
       rows[rowI].scrollIntoView({block:'nearest'});return}
     if(rowI<0)return;
-    const idx=+rows[rowI].querySelector('[data-st]').dataset.st,o=syl(cid(sylP,idx));
+    const idx=+rows[rowI].querySelector('[data-st]').dataset.st,o=syl(chs(sylP)[idx].id);
     const setSt=v=>{o.st=v;rows[rowI].querySelector('[data-st]').value=v;save();sylHead()};
     if(k==='d'){e.preventDefault();setSt(o.st==='done'?'ns':'done')}
     else if(k==='i'){e.preventDefault();setSt('ip')}
@@ -2727,6 +2947,10 @@ function vData(){
       Anyone with access to this unlocked device could read them, so use a device lock.</p>
     `}
   </div>
+  <div class="card" style="margin-top:12px">
+    <div class="rowb"><div><div style="font-size:15px">⏰ Reminders</div>
+      <div class="mut">${rem().filter(r=>r.on).length} on · morning, gym, wind-down, weekly review and one per habit</div></div>
+      <button class="btn pri" onclick="rOpen()">Open</button></div></div>
   <div class="card" style="margin-top:12px"><div class="eyebrow" style="margin-bottom:13px">This device</div>
     <div class="rowb"><div><div style="font-size:15px">${DEV==='phone'?'📱 Phone layout':'💻 Laptop layout'}</div>
       <div class="mut">Stored on this device only — your other device keeps its own setting.</div></div>
@@ -2738,7 +2962,9 @@ function vData(){
     <div class="step"><b class="n">2</b><div>In that repo go to <b>Settings → Pages</b>, set Source to
       <b>Deploy from a branch</b> and pick <code>main</code>. Wait a minute and it gives you a link.</div></div>
     <div class="step"><b class="n">3</b><div>Also upload the small <code>manifest.json</code> file into the same
-      repository. That is what makes Android treat it as an app rather than a bookmark.</div></div>
+      repository. That is what makes Android treat it as an app rather than a bookmark.
+      <b>The name on your home screen comes from that file, not from here</b> — to change it,
+      edit <code>name</code> and <code>short_name</code> inside it, then remove and re-add the app.</div></div>
     <div class="step"><b class="n">4</b><div>Open the link in <b>Chrome on your Android phone</b>. Tap the three dots,
       then <b>Add to Home screen</b> or <b>Install app</b>. Confirm.</div></div>
     <div class="step"><b class="n">5</b><div>It now opens full screen with its own icon, no address bar.
@@ -2818,12 +3044,14 @@ function migrate(o){
   // old saves keyed chapters by position (P2-5). Re-key them by name, once.
   const oldId=/^(P[1-6])-(\d+)$/;
   const remap=id=>{const m=oldId.exec(id);if(!m)return id;
-    const p=m[1],i=+m[2];return (CH[p]&&CH[p][i])?cid(p,i):id};
+    const p=m[1],i=+m[2];return (CH0[p]&&CH0[p][i])?cid(p,i):id};
   if(o.syl&&typeof o.syl==='object'){const nx={};
     for(const k in o.syl)nx[remap(k)]=o.syl[k];o.syl=nx}
   if(o.plan&&typeof o.plan==='object'){
     ['lec','dates'].forEach(f=>{if(o.plan[f]&&typeof o.plan[f]==='object'){
       const nx={};for(const k in o.plan[f])nx[remap(k)]=o.plan[f][k];o.plan[f]=nx}})}
+  if(!o.ch||typeof o.ch!=='object'||Array.isArray(o.ch))o.ch={};
+  if(!Array.isArray(o.rem))o.rem=[];
   if(!Array.isArray(o.habits)||!o.habits.length)o.habits=JSON.parse(JSON.stringify(HABITS0));
   o.habits=o.habits.filter(h=>h&&h.k&&h.n).map(h=>({k:h.k,e:h.e||'◦',n:h.n,
     d:(h.d===null?null:(Array.isArray(h.d)?h.d:[0,1,2,3,4,5,6]))}));
@@ -2831,7 +3059,7 @@ function migrate(o){
   ['days','syl','mile','meals','jr','plan','grat','rev','badges','ms'].forEach(k=>{
     if(!o[k]||typeof o[k]!=='object'||Array.isArray(o[k]))o[k]={}});
   return o}
-function blank(){return{habits:JSON.parse(JSON.stringify(HABITS0)),days:{},syl:{},gym:[],wt:[],mock:[],mile:{},meals:{},jr:{},plan:{},grat:{},rev:{},tasks:[],cards:[],badges:{},ms:{},name:'THE LONG GAME',tab:'dash'}}
+function blank(){return{ch:{},rem:[],habits:JSON.parse(JSON.stringify(HABITS0)),days:{},syl:{},gym:[],wt:[],mock:[],mile:{},meals:{},jr:{},plan:{},grat:{},rev:{},tasks:[],cards:[],badges:{},ms:{},name:'THE LONG GAME',tab:'dash'}}
 function csv(rows){return rows.map(r=>r.map(v=>{const s=String(v??'');
   return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}).join(',')).join('\n')}
 function dl(name,text){const b=new Blob([text],{type:'text/plain;charset=utf-8'}),u=URL.createObjectURL(b);
@@ -2856,7 +3084,7 @@ async function legacyLoad(){
   DONE0.forEach(id=>syl(id));
   devLoad();
   if(DEV)document.body.classList.toggle('phone',DEV==='phone');
-  shell();render();tLoad();bedTick();
+  shell();render();tLoad();bedTick();clockTick();remBoot();
   if(!DEV)devAsk();
   syBoot()})();
 /* ═══════════ command palette ═══════════ */
@@ -2905,6 +3133,12 @@ function actions(){
     run:()=>devSet(DEV==='phone'?'desktop':'phone')});
   a.push({e:'🌊',t:'Bad day — open the flow',k:'help',run:()=>bdOpen()});
   a.push({e:'⚙',t:'Edit my habits',k:'settings',run:()=>hOpen()});
+  a.push({e:'📖',t:'Edit chapters',k:'settings',run:()=>{D.tab='syl';save();shell();render();
+    setTimeout(cOpen,80)}});
+  a.push({e:'⏰',t:'Reminders and alarms',k:'settings',run:()=>rOpen()});
+  a.push({e:'📅',t:'Download calendar reminders',k:'settings',
+    run:()=>{dl((D.name||'reminders').toLowerCase().replace(/\s+/g,'-')+'.ics',buildICS());
+      toast('Open the file to add it to your calendar')}});
   a.push({e:'?',t:'Keyboard shortcuts',k:'help',run:()=>showKeys()});
   return a}
 function palOpen(){palA=actions();palI=0;$('#pal').classList.add('on');
@@ -2963,7 +3197,7 @@ addEventListener('resize',()=>{const c=$('#cfx');if(c){c.width=innerWidth;c.heig
 $('#bdBtn').onclick=bdOpen;
 $('#bdX').onclick=bdClose;
 $('#bdBack').onclick=bdBack;
-$('#hsheet').onclick=e=>{if(e.target.id==='hsheet')hClose()};
+$('#hsheet').onclick=e=>{if(e.target.id==='hsheet'){remOpenFlag=0;hClose()}};
 document.addEventListener('click',e=>{if(e.target.id==='lb'||e.target.className==='cx')$('#lb').classList.remove('on');
   if(e.target.id==='pal')palClose()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#lb').classList.remove('on')});
