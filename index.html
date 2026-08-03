@@ -458,6 +458,7 @@ body.phone #bdBtn{bottom:calc(86px + env(safe-area-inset-bottom))}
 <section id="s-jrnl"></section>
 <section id="s-rev"></section>
 <section id="s-mo"></section>
+<section id="s-exp"></section>
 <section id="s-data"></section>
 </div>
 <nav class="btm" id="btm"></nav>
@@ -759,7 +760,7 @@ function bedtime(d){let r=SLEEP[0][1];for(const[s,t]of SLEEP)if(d>=s)r=t;return 
 function daysList(){const o=[];for(let i=0;i<=diff(START,END);i++)o.push(addD(START,i));return o}
 function due(h,d){return h.d===null?(dnum(d)-dnum(START))%2===0:h.d.includes(wd(d))}
 
-let D={days:{},syl:{},gym:[],wt:[],mock:[],mile:{},meals:{},jr:{},plan:{},grat:{},rev:{},mo:{},exc:{},bdx:{},tasks:[],cards:[],badges:{},ms:{},name:'THE LONG GAME',tab:'dash'};
+let D={days:{},syl:{},gym:[],wt:[],mock:[],mile:{},meals:{},jr:{},plan:{},grat:{},rev:{},mo:{},exc:{},bdx:{},exp:[],tasks:[],cards:[],badges:{},ms:{},name:'THE LONG GAME',tab:'dash'};
 let VIS=[];
 function day(d){if(!D.days[d])D.days[d]={blocks:0,hours:0,topics:'',sleep:'',wake:'',steps:'',water:'',screen:'',spent:'',notes:'',sub:{},fric:[],fricNote:'',eAM:'',ePM:''};return D.days[d]}
 function syl(id){if(!D.syl[id])D.syl[id]={st:DONE0.includes(id)?'done':'ns',r1:0,r2:0,r3:0,weak:0,conf:0};return D.syl[id]}
@@ -947,7 +948,7 @@ function merge3(remote,base,local){
     for(const id in B)if(!(id in L))delete out[k][id]});
   if(!eq(local.plan,base.plan))out.plan=local.plan;
   if(local.name!==base.name)out.name=local.name;
-  const keyOf={tasks:x=>x.id,cards:x=>x.id,habits:x=>x.k,rem:x=>x.id,gym:x=>x.d+'|'+x.ex,
+  const keyOf={exp:x=>x.id,tasks:x=>x.id,cards:x=>x.id,habits:x=>x.k,rem:x=>x.id,gym:x=>x.d+'|'+x.ex,
     mock:x=>x.d+'|'+x.p+'|'+x.sc,wt:x=>x.d+'|'+x.w};
   Object.keys(keyOf).forEach(k=>{const f=keyOf[k];
     const L=local[k]||[],B=base[k]||[],map={};
@@ -1195,6 +1196,7 @@ const TABS=[['dash','Dashboard','<path d="M3 12h4l3-8 4 16 3-8h4"/>'],
 ['jrnl','Journal','<path d="M12 20h8M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19z"/>'],
 ['rev','Review','<path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/>'],
 ['mo','Audit','<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6M8.5 11.5l2 2 4-4.5"/>'],
+['exp','Trials','<path d="M9 3v6L4 19a2 2 0 0 0 1.8 2h12.4A2 2 0 0 0 20 19L15 9V3M8 3h8M7.5 14h9"/>'],
 ['data','Data','<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>']];
 function shell(){
   $('#nav').innerHTML=TABS.map(([k,n,p])=>`<button class="nv${D.tab===k?' on':''}" data-t="${k}"><svg viewBox="0 0 24 24">${p}</svg>${n}</button>`).join('');
@@ -1215,7 +1217,7 @@ function wordmark(){
     if(v===null)return;D.name=(v.trim()||'THE LONG GAME').slice(0,22);save();wordmark();celebrateSmall()};}
 function celebrateSmall(){$$('#wm b').forEach((b,i)=>{b.style.animation='none';void b.offsetWidth;
   b.style.animation=`drop .45s ${i*0.04}s backwards`})}
-function render(){({dash:vDash,today:vToday,timer:vTimer,syl:vSyl,gym:vGym,food:vFood,task:vTask,vis:vVis,cards:vCards,mock:vMock,jrnl:vJrnl,rev:vRev,mo:vMonth,data:vData})[D.tab]()}
+function render(){({dash:vDash,today:vToday,timer:vTimer,syl:vSyl,gym:vGym,food:vFood,task:vTask,vis:vVis,cards:vCards,mock:vMock,jrnl:vJrnl,rev:vRev,mo:vMonth,exp:vExp,data:vData})[D.tab]()}
 
 /* ---- dashboard ---- */
 function vDash(){
@@ -1237,6 +1239,15 @@ function vDash(){
   const ms=checkMilestone(),ln=lineOf(D.qn||0),tl=checkBadges();
   const ago30=addD(TODAY,-30),ago7=addD(TODAY,-7);
   el.innerHTML=`
+  ${nCard()}
+  ${(()=>{const e=expLive();
+    if(!e||(e.log||{})[TODAY]!==undefined||expDays(e).indexOf(TODAY)<0)return'';
+    return `<div class="card" style="margin-bottom:12px">
+      <div class="rowb"><div><div class="eyebrow" style="margin-bottom:3px">Today's trial</div>
+        <div style="font-size:15px">${esc(e.name)}</div>
+        ${e.change?`<div class="mut">${esc(e.change)}</div>`:''}</div>
+      <div style="display:flex;gap:7px"><button class="btn sm" id="exYes">Held</button>
+        <button class="btn sm" id="exNo">Didn't</button></div></div></div>`})()}
   ${ms?`<div class="mstone stg"><em>${ms[1]}</em><div><b>${ms[2]}</b><span>${ms[3]}</span></div></div>`:''}
   <div class="quo stg"><span class="mk">\u201C</span>
     <div><div class="tx">${esc(ln[0])}</div>${ln[1]?`<div class="by">— ${esc(ln[1])}</div>`:''}</div>
@@ -1380,6 +1391,11 @@ function vDash(){
     if(!pool.length)return $('#rollout').textContent='Everything is done and solid. Take the win.';
     const pick=pool[Math.floor(Math.random()*pool.length)];
     $('#rollout').innerHTML=`<span class="pill p-ac">${PAPERS[pick[0]].s}</span> ${esc(pick[1])} — go.`};
+  nWire();
+  const eTick=v=>{const e=expLive();e.log=e.log||{};e.log[TODAY]=v;save();render();
+    toast(v?'Noted — held.':"Noted. Not a failure, just an off-day for the record.")};
+  if($('#exYes'))$('#exYes').onclick=()=>eTick(1);
+  if($('#exNo'))$('#exNo').onclick=()=>eTick(0);
   countUp();
 }
 function countUp(){$$('#s-dash .stat .val').forEach(el=>{
@@ -2052,8 +2068,11 @@ function sylKeys(){const rows=$$('#s-syl tbody tr');if(!rows.length)return;
 
 /* ---- gym ---- */
 let gPart=SPLIT[wd(TODAY)]==='Rest'?'Back & Biceps':SPLIT[wd(TODAY)],gDate=TODAY,gSel=[];
-function pr(ex){let w=0,v=0,d='';(D.gym||[]).forEach(g=>{if(!g||g.ex!==ex||!Array.isArray(g.sets))return;
-  g.sets.forEach(s=>{if(s.w>w){w=s.w;d=g.d}v=Math.max(v,s.w*s.r)})});return{w,v,d}}
+function pr(ex){let w=0,v=0,d='',r=0,rd='';(D.gym||[]).forEach(g=>{if(!g||g.ex!==ex||!Array.isArray(g.sets))return;
+  g.sets.forEach(s=>{const sw=nn(s.w),sr=nn(s.r);
+    if(sw>0){if(sw>w){w=sw;d=g.d}v=Math.max(v,sw*sr)}
+    else if(sr>r){r=sr;rd=g.d}})});return{w,v,d,r,rd}}
+function prLab(p){return p.w?p.w+'kg':(p.r?p.r+' reps':'')}
 function exCustom(p){return ((D.exc||{})[p])||[]}
 function exList(p){return [...(EX[p]||[]),...exCustom(p)]}
 function exParts(){return [...new Set([...Object.keys(EX),...Object.keys(D.exc||{})])]}
@@ -2072,7 +2091,7 @@ function vGym(){
         <div class="eyebrow" style="margin-bottom:13px">Pick what you did</div>
         <div class="chips">${list.map(x=>{const p=pr(x);
           return `<button class="chip${gSel.includes(x)?' on':''}" data-ex="${esc(x)}">${esc(x)}
-          ${p.w?`<span class="mut" style="font-family:var(--fm);font-size:11px">${p.w}kg</span>`:''}
+          ${prLab(p)?`<span class="mut" style="font-family:var(--fm);font-size:11px">${prLab(p)}</span>`:''}
           ${mine.includes(x)?`<span data-exdel="${esc(x)}" title="Remove from the list" style="margin-left:5px;color:var(--ro);opacity:.55;font-size:14px;line-height:1">×</span>`:''}</button>`}).join('')}</div>
         <div style="display:flex;gap:7px;margin-top:13px">
           <input type="text" id="gNew" placeholder="Not in the list? Add it to ${esc(gPart)}…" style="flex:1">
@@ -2081,14 +2100,14 @@ function vGym(){
       ${gSel.map(x=>{const ex=todaysLog.find(g=>g.ex===x),sets=ex?ex.sets:[{r:'',w:''},{r:'',w:''},{r:'',w:''}];
         return `<div class="setb"><div class="rowb" style="margin-bottom:11px">
           <b style="font-size:14.5px">${esc(x)}</b>
-          <span class="mut" style="font-family:var(--fm)">best ${pr(x).w||'—'}${pr(x).w?'kg':''}</span></div>
+          <span class="mut" style="font-family:var(--fm)">best ${prLab(pr(x))||'—'}</span></div>
           <div class="exq" style="color:var(--tx3);font-size:11px"><span class="sn"></span>
             <span style="width:66px;text-align:center">reps</span><span style="width:66px;text-align:center">kg</span></div>
           <div id="sets-${esc(x).replace(/\W/g,'')}">${sets.map((s,i)=>
             `<div class="exq"><span class="sn">Set ${i+1}</span>
             <input type="number" class="sr" data-x="${esc(x)}" data-i="${i}" value="${s.r??''}" placeholder="8">
             <input type="number" class="sw" data-x="${esc(x)}" data-i="${i}" step="0.5" value="${s.w??''}" placeholder="60">
-            ${s.w&&s.w>=pr(x).w&&s.w>0?'<span class="pill p-ok">PR</span>':''}</div>`).join('')}</div>
+            ${(nn(s.w)>0&&nn(s.w)>=pr(x).w)||(!nn(s.w)&&nn(s.r)>0&&nn(s.r)>=pr(x).r)?'<span class="pill p-ok">PR</span>':''}</div>`).join('')}</div>
           <div style="display:flex;gap:7px;margin-top:9px">
             <button class="btn sm" data-add="${esc(x)}">+ set</button>
             <button class="btn sm" data-rem="${esc(x)}">− set</button></div></div>`}).join('')}
@@ -2097,16 +2116,16 @@ function vGym(){
     <div>
       <div class="card" style="margin-bottom:12px">
         <div class="eyebrow" style="margin-bottom:13px">🏆 Best lifts · ${gPart}</div>
-        ${list.filter(x=>pr(x).w).length?`<table><tbody>${list.filter(x=>pr(x).w).sort((a,b)=>pr(b).w-pr(a).w).map(x=>{const p=pr(x);
-          return `<tr><td>${esc(x)}</td><td style="text-align:right;font-family:var(--fm)">${p.w} kg</td>
-          <td class="mut" style="text-align:right;width:58px">${fmt(p.d)}</td></tr>`}).join('')}</tbody></table>`
+        ${list.filter(x=>pr(x).w||pr(x).r).length?`<table><tbody>${list.filter(x=>pr(x).w||pr(x).r).sort((a,b)=>pr(b).w-pr(a).w||pr(b).r-pr(a).r).map(x=>{const p=pr(x);
+          return `<tr><td>${esc(x)}</td><td style="text-align:right;font-family:var(--fm)">${p.w?p.w+' kg':p.r+' reps'}</td>
+          <td class="mut" style="text-align:right;width:58px">${fmt(p.w?p.d:p.rd)}</td></tr>`}).join('')}</tbody></table>`
           :'<div class="empty"><b>No lifts logged here yet</b>Save a workout to fill this in.</div>'}</div>
       <div class="card" style="margin-bottom:12px">
         <div class="eyebrow" style="margin-bottom:13px">Recent workouts</div>
         ${recent.length?recent.map(g=>`<div style="padding:9px 0;border-bottom:1px solid var(--bd)">
           <div class="rowb"><b style="font-size:13.5px;font-weight:400">${esc(g.ex)}</b>
           <span class="mut">${fmt(g.d)} · ${g.part}</span></div>
-          <div class="mut" style="font-family:var(--fm);margin-top:2px">${g.sets.filter(s=>s.r).map(s=>s.r+'×'+s.w).join('   ')}</div></div>`).join('')
+          <div class="mut" style="font-family:var(--fm);margin-top:2px">${g.sets.filter(s=>nn(s.r)>0).map(s=>nn(s.w)?s.r+'×'+s.w:s.r+' reps').join('   ')}</div></div>`).join('')
           :'<div class="empty"><b>Nothing yet</b>Your sets will show up here.</div>'}</div>
       <div class="card"><div class="eyebrow" style="margin-bottom:13px">Body weight</div>
         <div style="display:flex;gap:9px;margin-bottom:13px"><input type="number" id="bw" step="0.1" placeholder="kg" style="flex:1"><button class="btn" id="bwa">Log</button></div>
@@ -2142,7 +2161,7 @@ function vGym(){
     const g=cur(x);if(g.sets.length>1)g.sets.pop();save();vGym()});
   $$('.sr,.sw').forEach(i=>i.oninput=()=>stash());
   $('#gSave')&&($('#gSave').onclick=()=>{stash();
-    D.gym=D.gym.filter(g=>!(g.d===gDate&&!g.sets.some(s=>s.r&&s.w)));
+    D.gym=D.gym.filter(g=>!(g.d===gDate&&!g.sets.some(s=>nn(s.r)>0)));
     save();const n=D.gym.filter(g=>g.d===gDate).length;gSel=[];vGym();
     toast(n?`Workout saved — ${n} exercise${n>1?'s':''}`:'Nothing to save yet')});
   $('#bwa').onclick=()=>{const v=+$('#bw').value;if(!v)return toast('Enter a weight');
@@ -2960,6 +2979,177 @@ function moWire(keys){
   if(n)n.onclick=()=>{if(i<keys.length-1)go(keys[i+1])};
   if(s)s.onchange=e=>go(e.target.value)}
 
+/* ═══════════ noticing ═══════════
+   Never a verdict. It holds up something you said, puts the number next to it,
+   and stops talking. Weekly, unless something is badly off. */
+function nWin(n,upto){const o=[];let d=upto||TODAY;
+  for(let i=0;i<n;i++){o.push(d);d=addD(d,-1)}
+  return o.filter(x=>x>=START&&logged(x))}
+function nAvgB(ds){const l=ds.filter(d=>!restDay(d));
+  return l.length?l.reduce((a,d)=>a+nn(D.days[d].blocks),0)/l.length:null}
+function nLate(d){const x=D.days[d];if(!x||!x.sleep)return null;
+  const t=bedtime(d),[a,b]=x.sleep.split(':').map(Number),[c,e]=t.split(':').map(Number);
+  let m1=a*60+b,m2=c*60+e;if(m1<720)m1+=1440;if(m2<720)m2+=1440;return m1-m2}
+function hhmm(m){const s=m<0?'-':'';m=Math.abs(Math.round(m));
+  return s+(m>=60?Math.floor(m/60)+'h '+(m%60?(m%60)+'m':''):m+'m').trim()}
+
+function notices(){
+  const out=[],W=nWin(9);
+  /* 1 — the fix you set yourself in the audit */
+  const pk=moShift(TODAY.slice(0,7),-1),nt=(D.mo||{})[pk];
+  if(nt&&nt.fix){
+    const pv=moStats(pk),cur=moStats(TODAY.slice(0,7));
+    if(pv.chief&&cur.lg.length>=5){
+      const t=pv.chief[0],was=moPc(pv.chief[1],pv.lg.length),now=moPc(cur.fc[t]||0,cur.lg.length);
+      if(now>=was)out.push({k:'fix',urgent:0,
+        said:`At the end of ${moName(pk,1)} you wrote: “${esc(nt.fix)}”`,
+        num:`${esc(t)} was on ${was}% of your days then. This month it is on ${now}%.`})}}
+  /* 2 — bedtime against the target you set */
+  const sl=W.filter(d=>nLate(d)!==null).slice(0,7);
+  if(sl.length>=5){
+    const av=sl.reduce((a,d)=>a+nLate(d),0)/sl.length,bad=sl.filter(d=>nLate(d)>60).length;
+    if(av>35)out.push({k:'bed',urgent:bad>=4,
+      said:`Your bedtime target is ${bedtime(TODAY)}.`,
+      num:`Last ${sl.length} nights you were ${hhmm(av)} past it on average${bad?`, more than an hour late on ${bad}`:''}.`})}
+  /* 3 — hours of sleep, which is the one that actually shows up in the blocks */
+  const sh=W.filter(d=>slept(d)>0).slice(0,7);
+  if(sh.length>=5){
+    const av=sh.reduce((a,d)=>a+slept(d),0)/sh.length;
+    if(av<6.2)out.push({k:'slp',urgent:av<5.5,
+      said:'Sleep, last week.',
+      num:`${av.toFixed(1)} hours a night on average across ${sh.length} nights.`})}
+  /* 4 — blocks drifting, measured against your own recent normal */
+  const wk=nWin(7),pr4=nWin(28).filter(d=>wk.indexOf(d)<0);
+  const a1=nAvgB(wk),a0=nAvgB(pr4);
+  if(a1!==null&&a0!==null&&wk.filter(d=>!restDay(d)).length>=4&&pr4.length>=8&&a0>=1){
+    if(a1<a0*0.7)out.push({k:'blk',urgent:a1<a0*0.45,
+      said:'Blocks, this week against your last three.',
+      num:`${a1.toFixed(1)} a day, against ${a0.toFixed(1)} before. Not a verdict — could be the week, could be the sleep above.`})}
+  /* 5 — a friction tag climbing */
+  const r14=nWin(14),r42=nWin(42).filter(d=>r14.indexOf(d)<0);
+  if(r14.length>=6&&r42.length>=10){
+    const cnt=(ds,t)=>ds.filter(d=>(D.days[d].fric||[]).includes(t)).length;
+    const tags=[...new Set(r14.flatMap(d=>D.days[d].fric||[]))];
+    let top=null;
+    tags.forEach(t=>{const n=cnt(r14,t);if(n<4)return;
+      const p1=Math.round(n/r14.length*100),p0=Math.round(cnt(r42,t)/r42.length*100);
+      if(p1-p0>=20&&(!top||p1-p0>top.d))top={t,p1,p0,d:p1-p0,n}});
+    if(top)out.push({k:'fri',urgent:0,
+      said:`${esc(top.t)} is climbing.`,
+      num:`On ${top.p1}% of the last fortnight, against ${top.p0}% of the month before that.`})}
+  /* 6 — never miss twice, shown gently and only while it can still be acted on */
+  const y=addD(TODAY,-1),y2=addD(TODAY,-2);
+  if(logged(y)&&logged(y2)&&!restDay(y)&&!restDay(y2)&&
+     nn(D.days[y].blocks)===0&&nn(D.days[y2].blocks)===0&&nn(day(TODAY).blocks)===0)
+    out.push({k:'two',urgent:1,said:'Two days without a block.',
+      num:'The rule you wrote was never miss twice. One block today, badly sat, closes it.'});
+  return out}
+
+function nStamp(){return (D.ms||{}).nSeen||0}
+function nDue(){const ns=notices();
+  if(!ns.length)return[];
+  if(ns.some(n=>n.urgent))return ns;
+  return (Date.now()-nStamp())>6.5*864e5?ns:[]}
+function nCard(){
+  const ns=nDue();if(!ns.length)return'';
+  return `<div class="card" style="margin-bottom:12px;border-color:var(--amb)">
+    <div class="rowb" style="margin-bottom:12px"><span class="eyebrow">Noticing</span>
+      <button class="btn sm" id="nOk">Seen it</button></div>
+    ${ns.slice(0,2).map(n=>`<div style="padding:9px 0;border-bottom:1px solid var(--bd)">
+      <div style="font-size:14px;color:var(--tx)">${n.said}</div>
+      <div class="mut" style="margin-top:3px">${n.num}</div></div>`).join('')}
+    <p class="mut" style="margin-top:11px">Numbers, not a verdict. You decide whether any of it matters.</p></div>`}
+function nWire(){const b=$('#nOk');if(b)b.onclick=()=>{D.ms=D.ms||{};D.ms.nSeen=Date.now();save();render()}}
+
+/* ═══════════ experiments ═══════════
+   One variable, a fixed run, then your on-days against your off-days. */
+function exps(){D.exp=Array.isArray(D.exp)?D.exp:[];return D.exp}
+function expLive(){return exps().find(e=>!e.done)}
+function expDays(e){const o=[];for(let i=0;i<e.days;i++){const d=addD(e.start,i);if(d<=TODAY)o.push(d)}return o}
+function expSplit(e){const on=[],off=[];
+  expDays(e).forEach(d=>{if(!logged(d))return;
+    const v=(e.log||{})[d];if(v===1)on.push(d);else if(v===0)off.push(d)});
+  return{on,off}}
+const EXM=[
+ ['Blocks',d=>restDay(d)?null:nn(D.days[d].blocks),1,'a day'],
+ ['Hours',d=>restDay(d)?null:nn(D.days[d].hours),1,'a day'],
+ ['Sleep',d=>slept(d)||null,1,'hours'],
+ ['Minutes past bedtime',d=>{const v=nLate(d);return v===null?null:v},0,'min'],
+ ['Friction logged',d=>(D.days[d].fric||[]).length,0,'tags a day']];
+function expCalc(e){const{on,off}=expSplit(e);
+  return EXM.map(([lab,fn,up,unit])=>{
+    const av=a=>{const v=a.map(fn).filter(x=>x!==null&&x!==undefined&&!isNaN(x));
+      return v.length?v.reduce((s,x)=>s+x,0)/v.length:null};
+    const A=av(on),B=av(off);
+    return{lab,unit,up,A,B,d:(A===null||B===null)?null:A-B}}).filter(m=>m.A!==null||m.B!==null)}
+
+function vExp(){
+  const el=$('#s-exp'),e=expLive(),past=exps().filter(x=>x.done);
+  el.innerHTML=`<h2>Experiments</h2>
+  <div class="sub">One change, a fixed run, then the days it held against the days it didn't. Nothing here is proof — it is your own evidence about your own life.</div>
+  ${e?(()=>{const ds=expDays(e),{on,off}=expSplit(e),left=e.days-ds.length,rows=expCalc(e);
+    return `<div class="card" style="margin-bottom:12px">
+      <div class="rowb" style="margin-bottom:4px"><span class="eyebrow">Running</span>
+        <span class="pill ${left>0?'p-ac':'p-ok'}">${left>0?left+' day'+(left===1?'':'s')+' to go':'complete'}</span></div>
+      <div style="font-size:22px;font-weight:400;letter-spacing:-.02em">${esc(e.name)}</div>
+      <div class="mut" style="margin-bottom:14px">${esc(e.change||'')} · started ${fmt(e.start)} · ${on.length} held, ${off.length} didn't</div>
+      <div class="eyebrow" style="margin-bottom:9px">Did it hold?</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">${ds.map(d=>{const v=(e.log||{})[d];
+        return `<button class="chip sq" data-ed="${d}" style="${v===1?'border-color:var(--okb);color:var(--ok)':v===0?'border-color:var(--rob);color:var(--ro)':''}">
+          ${fmt(d,{day:'numeric',month:'short'})} ${v===1?'✓':v===0?'✕':'·'}</button>`}).join('')}</div>
+      <p class="mut" style="margin-top:10px">Tap a day to cycle: held → didn't → not answered.</p>
+      ${on.length>=3&&off.length>=3?`<div class="hr"></div>
+        <div class="eyebrow" style="margin-bottom:11px">On the days it held, against the days it didn't</div>
+        <table><thead><tr><th></th><th style="text-align:right">Held</th><th style="text-align:right">Didn't</th><th style="text-align:right">Difference</th></tr></thead><tbody>
+        ${rows.map(m=>`<tr><td>${m.lab}</td>
+          <td style="text-align:right;font-family:var(--fm)">${m.A===null?'—':m.A.toFixed(1)}</td>
+          <td style="text-align:right;font-family:var(--fm)">${m.B===null?'—':m.B.toFixed(1)}</td>
+          <td style="text-align:right;font-family:var(--fm)">${m.d===null?'—':
+            `<span class="pill ${Math.abs(m.d)<0.2?'p-nu':(m.d>0)===!!m.up?'p-ok':'p-am'}">${m.d>0?'+':''}${m.d.toFixed(1)}</span>`}</td></tr>`).join('')}
+        </tbody></table>
+        <p class="mut" style="margin-top:11px">${on.length} days against ${off.length}. That is a hint, not a finding —
+        a run this short can swing on one bad night. If a difference is small, treat it as nothing.</p>`
+        :`<div class="hr"></div><div class="empty"><b>Not enough answered days yet</b>
+        Three of each before it will compare anything. ${on.length} held, ${off.length} didn't so far.</div>`}
+      <div style="display:flex;gap:8px;margin-top:13px;flex-wrap:wrap">
+        ${left<=0?`<button class="btn pri" id="exEnd">File it and finish</button>`:`<button class="btn" id="exEnd">Finish early</button>`}
+        <button class="btn dgr" id="exDel">Discard</button></div></div>`})()
+   :`<div class="card" style="margin-bottom:12px">
+      <div class="eyebrow" style="margin-bottom:13px">Start one</div>
+      <div class="grid g2">
+        <div class="fld"><label>What you're changing</label>
+          <input type="text" id="exN" placeholder="Phone stays out of the bedroom"></div>
+        <div class="fld"><label>How you'll know it held <span class="mut">one sentence</span></label>
+          <input type="text" id="exC" placeholder="Phone charges in the kitchen from 9pm"></div></div>
+      <div class="fld" style="margin-bottom:0"><label>How many days</label>
+        <select id="exD" style="width:150px"><option value="14" selected>14 days</option>
+          <option value="10">10 days</option><option value="21">21 days</option><option value="28">28 days</option></select></div>
+      <button class="btn pri" id="exGo" style="margin-top:13px">Start today</button>
+      <p class="mut" style="margin-top:11px">Pick one thing. Two at once and you will not know which one moved the numbers.</p></div>`}
+  ${past.length?`<div class="card"><div class="eyebrow" style="margin-bottom:13px">Finished</div>
+    ${past.slice().reverse().map(x=>{const r=expCalc(x),b=r.find(m=>m.lab==='Blocks'),s=expCalc(x).find(m=>m.lab==='Sleep');
+      const{on,off}=expSplit(x);
+      return `<div style="padding:10px 0;border-bottom:1px solid var(--bd)">
+        <div class="rowb"><b style="font-weight:400;font-size:14px">${esc(x.name)}</b>
+          <span class="mut">${fmt(x.start)} · ${on.length}/${on.length+off.length} held</span></div>
+        <div class="mut" style="margin-top:3px">${b&&b.d!==null?`Blocks ${b.A.toFixed(1)} vs ${b.B.toFixed(1)}`:'Not enough days to compare'}${s&&s.d!==null?` · sleep ${s.A.toFixed(1)}h vs ${s.B.toFixed(1)}h`:''}</div>
+        ${x.note?`<div style="font-size:13.5px;color:var(--tx2);margin-top:5px">${esc(x.note)}</div>`:''}</div>`}).join('')}</div>`:''}`;
+
+  if($('#exGo'))$('#exGo').onclick=()=>{const n=($('#exN').value||'').trim();
+    if(!n)return toast('Name the one thing you are changing');
+    exps().push({id:Date.now()+'',name:n,change:($('#exC').value||'').trim(),
+      start:TODAY,days:+$('#exD').value,log:{},done:0,note:''});
+    save();vExp();toast('Running. Answer it once a day — that is the whole job.')};
+  $$('[data-ed]').forEach(b=>b.onclick=()=>{const d=b.dataset.ed,x=expLive();
+    x.log=x.log||{};x.log[d]=x.log[d]===1?0:x.log[d]===0?undefined:1;
+    if(x.log[d]===undefined)delete x.log[d];
+    save();vExp()});
+  if($('#exEnd'))$('#exEnd').onclick=()=>{const x=expLive();
+    const n=prompt('One line — what did you actually learn?','');
+    x.note=(n||'').trim();x.done=1;save();vExp();toast('Filed.')};
+  if($('#exDel'))$('#exDel').onclick=()=>{if(!confirm('Discard this experiment and its answers?'))return;
+    D.exp=exps().filter(x=>x.done);save();vExp()}}
+
 /* ---- bad day ----
    Every word on these screens comes from D.bdx, which lives in your browser and
    in the encrypted gist — never in this file. What is written below is the
@@ -3462,7 +3652,7 @@ function migrate(o){
   ['days','syl','mile','meals','jr','plan','grat','rev','mo','exc','bdx','badges','ms'].forEach(k=>{
     if(!o[k]||typeof o[k]!=='object'||Array.isArray(o[k]))o[k]={}});
   return o}
-function blank(){return{ch:{},rem:[],habits:JSON.parse(JSON.stringify(HABITS0)),days:{},syl:{},gym:[],wt:[],mock:[],mile:{},meals:{},jr:{},plan:{},grat:{},rev:{},mo:{},exc:{},bdx:{},tasks:[],cards:[],badges:{},ms:{},name:'THE LONG GAME',tab:'dash'}}
+function blank(){return{ch:{},rem:[],habits:JSON.parse(JSON.stringify(HABITS0)),days:{},syl:{},gym:[],wt:[],mock:[],mile:{},meals:{},jr:{},plan:{},grat:{},rev:{},mo:{},exc:{},bdx:{},exp:[],tasks:[],cards:[],badges:{},ms:{},name:'THE LONG GAME',tab:'dash'}}
 function csv(rows){return rows.map(r=>r.map(v=>{const s=String(v??'');
   return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}).join(',')).join('\n')}
 function dl(name,text){const b=new Blob([text],{type:'text/plain;charset=utf-8'}),u=URL.createObjectURL(b);
@@ -3638,7 +3828,7 @@ function palRender(v){const list=palMatch(v);palI=Math.min(palI,Math.max(0,list.
     :'<div class="pi" style="color:var(--tx3);cursor:default">Nothing matches that</div>';
   $('#pl')._list=list;
   $$('#pl [data-pi]').forEach(d=>d.onclick=()=>{list[+d.dataset.pi].run();palClose()})}
-function showKeys(){toast('/ palette · [ ] tabs · g then d,t,s,y,g,f,k,v,c,m,j,r,a,x · syllabus: j k move, d done, i progress, f flag, 1-5 confidence · cards: space reveals, 1-4 grades · esc leaves focus mode');}
+function showKeys(){toast('/ palette · [ ] tabs · g then d,t,s,y,g,f,k,v,c,m,j,r,a,e,x · syllabus: j k move, d done, i progress, f flag, 1-5 confidence · cards: space reveals, 1-4 grades · esc leaves focus mode');}
 
 function cardKey(e){
   if(D.tab!=='cards'||fcMode!=='rev'||!fcCur)return false;
@@ -3652,7 +3842,7 @@ function cardKey(e){
 
 /* ═══════════ global keys ═══════════ */
 let gPending=0;
-const GOTO={d:'dash',t:'today',s:'timer',y:'syl',g:'gym',f:'food',k:'task',v:'vis',c:'cards',m:'mock',j:'jrnl',r:'rev',a:'mo',x:'data'};
+const GOTO={d:'dash',t:'today',s:'timer',y:'syl',g:'gym',f:'food',k:'task',v:'vis',c:'cards',m:'mock',j:'jrnl',r:'rev',a:'mo',e:'exp',x:'data'};
 document.addEventListener('keydown',e=>{
   const typing=e.target.matches('input,textarea,select');
   if(e.key==='Escape'){
