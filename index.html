@@ -547,14 +547,16 @@ function newKey(){let i=1;while(hab().some(h=>h.k==='h'+i))i++;return 'h'+i}
 const PM=['Glycolic serum','Rest — moisturiser only','Salicylic serum','Rest — moisturiser only','Glycolic serum','Rest — moisturiser only','Salicylic serum'];
 const SPLIT=['Back & Biceps','Chest & Triceps','Legs','Shoulders','Chest','Legs','Rest'];
 const EX={
-'Back & Biceps':['Lat pulldown','Pull ups','Barbell row','Seated cable row','One-arm dumbbell row','T-bar row','Straight-arm pulldown','Face pull','Barbell curl','Dumbbell curl','Hammer curl','Preacher curl','Incline dumbbell curl','Cable curl','Shrugs','Deadlift'],
-'Chest & Triceps':['Bench press','Incline bench press','Dumbbell press','Incline dumbbell press','Decline press','Chest fly','Cable crossover','Pec deck','Push ups','Dips','Triceps pushdown','Overhead triceps extension','Skull crushers','Close-grip bench press','Triceps kickback'],
-'Chest':['Bench press','Incline bench press','Dumbbell press','Incline dumbbell press','Decline press','Chest fly','Cable crossover','Pec deck','Push ups','Dips'],
-'Legs':['Squat','Front squat','Leg press','Romanian deadlift','Leg extension','Leg curl','Walking lunges','Bulgarian split squat','Hip thrust','Calf raise','Seated calf raise','Hack squat','Goblet squat'],
-'Shoulders':['Overhead press','Dumbbell shoulder press','Arnold press','Lateral raise','Cable lateral raise','Front raise','Rear delt fly','Upright row','Face pull','Shrugs'],
-'Arms':['Barbell curl','Dumbbell curl','Hammer curl','Preacher curl','Cable curl','Triceps pushdown','Overhead triceps extension','Skull crushers','Dips','Close-grip bench press'],
-'Core':['Plank','Hanging leg raise','Cable crunch','Russian twist','Ab wheel','Bicycle crunch','Dead bug'],
-'Cardio':['Treadmill walk','Incline walk','Cycling','Stair climber','Rowing','Elliptical']};
+'Back & Biceps':['Lat pulldown','Wide-grip lat pulldown','Close-grip lat pulldown','Neutral-grip pulldown','Single-arm lat pulldown','Pull ups','Chin ups','Assisted pull ups','Barbell row','Pendlay row','Smith machine row','Seated cable row','One-arm dumbbell row','Chest-supported row','Machine row','T-bar row','Inverted row','Straight-arm pulldown','Cable pullover','Face pull','Reverse pec deck','Deadlift','Sumo deadlift','Trap bar deadlift','Rack pull','Shrugs','Dumbbell shrugs','Barbell curl','EZ-bar curl','Dumbbell curl','Hammer curl','Incline hammer curl','Preacher curl','Incline dumbbell curl','Concentration curl','Spider curl','Cable curl','Cable rope curl','Zottman curl','Reverse curl','Wrist curl'],
+'Chest & Triceps':['Bench press','Incline bench press','Decline press','Smith machine bench','Machine chest press','Dumbbell press','Incline dumbbell press','Decline dumbbell press','Chest fly','Incline cable fly','Cable crossover','Low-to-high cable fly','Pec deck','Dumbbell pullover','Push ups','Incline push ups','Diamond push ups','Dips','Assisted dips','Bench dips','Triceps pushdown','Rope pushdown','Single-arm pushdown','Reverse-grip pushdown','Overhead triceps extension','Overhead rope extension','Skull crushers','Close-grip bench press','JM press','Triceps kickback'],
+'Chest':['Bench press','Incline bench press','Decline press','Smith machine bench','Machine chest press','Dumbbell press','Incline dumbbell press','Decline dumbbell press','Chest fly','Incline cable fly','Cable crossover','Low-to-high cable fly','Pec deck','Dumbbell pullover','Push ups','Incline push ups','Dips','Assisted dips'],
+'Legs':['Squat','Front squat','Smith machine squat','Hack squat','Goblet squat','Pause squat','Box squat','Leg press','Single-leg press','Romanian deadlift','Stiff-leg deadlift','Good morning','Leg extension','Leg curl','Seated leg curl','Lying leg curl','Nordic curl','Walking lunges','Reverse lunge','Bulgarian split squat','Step up','Sissy squat','Hip thrust','Glute bridge','Cable kickback','Adductor machine','Abductor machine','Calf raise','Standing calf raise','Seated calf raise','Donkey calf raise','Leg press calf raise'],
+'Shoulders':['Overhead press','Push press','Behind-neck press','Dumbbell shoulder press','Seated dumbbell press','Machine shoulder press','Smith machine press','Arnold press','Landmine press','Lateral raise','Cable lateral raise','Machine lateral raise','Leaning lateral raise','Front raise','Cable front raise','Plate front raise','Rear delt fly','Bent-over lateral raise','Reverse pec deck','Cable rear delt fly','Face pull','Upright row','Y-raise','Cuban press','Shrugs'],
+'Arms':['Barbell curl','EZ-bar curl','Dumbbell curl','Hammer curl','Incline hammer curl','Preacher curl','Incline dumbbell curl','Concentration curl','Spider curl','Cable curl','Cable rope curl','Zottman curl','Reverse curl','Wrist curl','Triceps pushdown','Rope pushdown','Single-arm pushdown','Reverse-grip pushdown','Overhead triceps extension','Overhead rope extension','Skull crushers','Close-grip bench press','JM press','Triceps kickback','Dips','Bench dips','Diamond push ups'],
+'Core':['Plank','Weighted plank','Side plank','Hanging leg raise','Hanging knee raise','Toes to bar','Captain\'s chair raise','Leg raises (floor)','Cable crunch','Crunches','Sit ups','Decline sit up','V-ups','Russian twist','Cable woodchop','Pallof press','Ab wheel','Bicycle crunch','Mountain climbers','Dead bug','Hollow hold'],
+'Full body':['Deadlift','Squat','Overhead press','Bench press','Barbell row','Clean and press','Power clean','Thruster','Kettlebell swing','Kettlebell goblet squat','Turkish get up','Farmer\'s walk','Sled push','Burpees'],
+'Cardio':['Treadmill walk','Incline walk','Outdoor walk','Jogging','Treadmill run','Cycling','Assault bike','Stair climber','Rowing','Elliptical','Skipping','Swimming','HIIT intervals','Battle ropes','Sled push'],
+'Mobility':['Cat-cow','Hip flexor stretch','Pigeon pose','Hamstring stretch','Thoracic rotation','Shoulder dislocates','Wall slides','Couch stretch','90/90 hip switch','Ankle mobility','Child\'s pose','Neck stretch','Wrist mobility','Foam roll — back','Foam roll — quads','Foam roll — IT band']};
 
 const FOOD=[
 ['Roti / chapati','1 pc',110,3.2,20,2.5],['Phulka (no ghee)','1 pc',85,3,18,0.6],
@@ -757,7 +759,7 @@ function bedtime(d){let r=SLEEP[0][1];for(const[s,t]of SLEEP)if(d>=s)r=t;return 
 function daysList(){const o=[];for(let i=0;i<=diff(START,END);i++)o.push(addD(START,i));return o}
 function due(h,d){return h.d===null?(dnum(d)-dnum(START))%2===0:h.d.includes(wd(d))}
 
-let D={days:{},syl:{},gym:[],wt:[],mock:[],mile:{},meals:{},jr:{},plan:{},grat:{},rev:{},mo:{},tasks:[],cards:[],badges:{},ms:{},name:'THE LONG GAME',tab:'dash'};
+let D={days:{},syl:{},gym:[],wt:[],mock:[],mile:{},meals:{},jr:{},plan:{},grat:{},rev:{},mo:{},exc:{},bdx:{},tasks:[],cards:[],badges:{},ms:{},name:'THE LONG GAME',tab:'dash'};
 let VIS=[];
 function day(d){if(!D.days[d])D.days[d]={blocks:0,hours:0,topics:'',sleep:'',wake:'',steps:'',water:'',screen:'',spent:'',notes:'',sub:{},fric:[],fricNote:'',eAM:'',ePM:''};return D.days[d]}
 function syl(id){if(!D.syl[id])D.syl[id]={st:DONE0.includes(id)?'done':'ns',r1:0,r2:0,r3:0,weak:0,conf:0};return D.syl[id]}
@@ -939,7 +941,7 @@ function merge3(remote,base,local){
       for(const f in b)if(!(f in l))delete m[f];
       out[k][id]=m}
     for(const id in B)if(!(id in L))delete out[k][id]});
-  ['meals','jr','grat','rev','mo','mile','badges','ms','ch'].forEach(k=>{
+  ['meals','jr','grat','rev','mo','exc','bdx','mile','badges','ms','ch'].forEach(k=>{
     out[k]=out[k]||{};const L=local[k]||{},B=base[k]||{};
     for(const id in L)if(!eq(L[id],B[id]))out[k][id]=L[id];
     for(const id in B)if(!(id in L))delete out[k][id]});
@@ -2052,23 +2054,30 @@ function sylKeys(){const rows=$$('#s-syl tbody tr');if(!rows.length)return;
 let gPart=SPLIT[wd(TODAY)]==='Rest'?'Back & Biceps':SPLIT[wd(TODAY)],gDate=TODAY,gSel=[];
 function pr(ex){let w=0,v=0,d='';(D.gym||[]).forEach(g=>{if(!g||g.ex!==ex||!Array.isArray(g.sets))return;
   g.sets.forEach(s=>{if(s.w>w){w=s.w;d=g.d}v=Math.max(v,s.w*s.r)})});return{w,v,d}}
+function exCustom(p){return ((D.exc||{})[p])||[]}
+function exList(p){return [...(EX[p]||[]),...exCustom(p)]}
+function exParts(){return [...new Set([...Object.keys(EX),...Object.keys(D.exc||{})])]}
 function vGym(){
   const el=$('#s-gym');
-  const list=EX[gPart]||[];
+  const list=exList(gPart),mine=exCustom(gPart);
   const todaysLog=(D.gym||[]).filter(g=>g&&g.d===gDate&&Array.isArray(g.sets));
   const recent=[...(D.gym||[])].filter(g=>g&&Array.isArray(g.sets)).sort((a,b)=>a.d<b.d?1:-1).slice(0,10);
   el.innerHTML=`<div class="rowb" style="margin-bottom:20px">
     <div><h2>Gym</h2><div class="sub" style="margin:0">Today is ${SPLIT[wd(TODAY)].toLowerCase()}. Tick the exercises, fill the sets.</div></div>
     <input type="date" id="gDt" value="${gDate}" style="width:160px"></div>
-  <div class="tabs">${Object.keys(EX).map(p=>`<button class="tb${gPart===p?' on':''}" data-gp="${p}">${p}</button>`).join('')}</div>
+  <div class="tabs">${exParts().map(p=>`<button class="tb${gPart===p?' on':''}" data-gp="${esc(p)}">${esc(p)}</button>`).join('')}</div>
   <div class="grid g2" style="align-items:start">
     <div>
       <div class="card" style="margin-bottom:12px">
         <div class="eyebrow" style="margin-bottom:13px">Pick what you did</div>
         <div class="chips">${list.map(x=>{const p=pr(x);
-          return `<button class="chip${gSel.includes(x)?' on':''}" data-ex="${esc(x)}">${x}
-          ${p.w?`<span class="mut" style="font-family:var(--fm);font-size:11px">${p.w}kg</span>`:''}</button>`}).join('')}</div>
-        <p class="mut" style="margin-top:11px">The small number is your best ever weight on that lift.</p></div>
+          return `<button class="chip${gSel.includes(x)?' on':''}" data-ex="${esc(x)}">${esc(x)}
+          ${p.w?`<span class="mut" style="font-family:var(--fm);font-size:11px">${p.w}kg</span>`:''}
+          ${mine.includes(x)?`<span data-exdel="${esc(x)}" title="Remove from the list" style="margin-left:5px;color:var(--ro);opacity:.55;font-size:14px;line-height:1">×</span>`:''}</button>`}).join('')}</div>
+        <div style="display:flex;gap:7px;margin-top:13px">
+          <input type="text" id="gNew" placeholder="Not in the list? Add it to ${esc(gPart)}…" style="flex:1">
+          <button class="btn" id="gAddEx">Add</button></div>
+        <p class="mut" style="margin-top:11px">The small number is your best ever weight on that lift.${mine.length?' The ones you added carry a × — removing one keeps every set you have already logged.':''}</p></div>
       ${gSel.map(x=>{const ex=todaysLog.find(g=>g.ex===x),sets=ex?ex.sets:[{r:'',w:''},{r:'',w:''},{r:'',w:''}];
         return `<div class="setb"><div class="rowb" style="margin-bottom:11px">
           <b style="font-size:14.5px">${esc(x)}</b>
@@ -2113,6 +2122,20 @@ function vGym(){
   $$('[data-gp]').forEach(b=>b.onclick=()=>{gPart=b.dataset.gp;gSel=[];vGym()});
   $$('[data-ex]').forEach(b=>b.onclick=()=>{const x=b.dataset.ex,i=gSel.indexOf(x);
     if(i<0)gSel.push(x);else gSel.splice(i,1);vGym()});
+  $$('[data-exdel]').forEach(b=>b.onclick=e=>{e.stopPropagation();const x=b.dataset.exdel;
+    D.exc[gPart]=exCustom(gPart).filter(z=>z!==x);
+    if(!D.exc[gPart].length)delete D.exc[gPart];
+    gSel=gSel.filter(z=>z!==x);save();vGym();
+    toast('Removed from the list — your logged sets are untouched')});
+  const addEx=()=>{const f=$('#gNew'),x=(f.value||'').trim().replace(/\s+/g,' ');
+    if(!x)return f.focus();
+    if(x.length>44)return toast('A bit long — shorten the name');
+    const hit=exList(gPart).find(z=>z.toLowerCase()===x.toLowerCase());
+    if(hit){if(!gSel.includes(hit))gSel.push(hit);f.value='';vGym();return toast('Already there — picked it for you')}
+    D.exc=D.exc||{};D.exc[gPart]=[...exCustom(gPart),x];gSel.push(x);save();vGym();
+    toast(`${x} added to ${gPart}`)};
+  $('#gAddEx').onclick=addEx;
+  $('#gNew').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();addEx()}};
   $$('[data-add]').forEach(b=>b.onclick=()=>{const x=b.dataset.add;stash();
     const g=cur(x);g.sets.push({r:'',w:''});save();vGym()});
   $$('[data-rem]').forEach(b=>b.onclick=()=>{const x=b.dataset.rem;stash();
@@ -2937,7 +2960,89 @@ function moWire(keys){
   if(n)n.onclick=()=>{if(i<keys.length-1)go(keys[i+1])};
   if(s)s.onchange=e=>go(e.target.value)}
 
-/* ---- bad day ---- */
+/* ---- bad day ----
+   Every word on these screens comes from D.bdx, which lives in your browser and
+   in the encrypted gist — never in this file. What is written below is the
+   neutral fallback that ships in the open. Load your own wording from the Data
+   tab and it replaces all of it. */
+const BD0={
+'home.h':"What's going on right now?",'home.p':"Pick the closest one. It doesn't have to be exact.",
+'home.1t':'The urge is here','home.1s':"Haven't acted on it",
+'home.2t':'It already happened','home.2s':'Time gone',
+'home.3t':"It's all too much",'home.3s':"Overwhelmed, can't start anything",
+'home.4t':'Just give me something to do','home.4s':'Breathing, the aim, other tools',
+'home.5t':"Remind me what's true",'home.5s':'No steps, just the list',
+'tools.h':'Something to do with your hands and lungs.',
+'tools.p':'None of these are clever. They just take the space the urge wants.',
+'tools.brt':'Box breathing','tools.brs':'Four in, four hold, four out, four hold',
+'tools.aimt':"What I'm aiming for",'tools.aims':'The actual reason',
+'tools.fwt':'Play it forward','tools.fws':'What this looks like in twenty minutes',
+'tools.rmt':'Change the room','tools.rms':'Geography, not willpower',
+'tools.wtt':'Ten minute wait','tools.wts':'Just sit it out',
+'br.h':'Box breathing','br.p':'Follow the circle. Nose in, mouth out.','br.btn':"I'm alright",
+'aim.h':"This is what it's for.",
+'aim.lines':["Nothing written here yet. Open the Data tab and load your own words — this screen is where they matter most."],
+'aim.quote':'','aim.after':'','aim.note':'','aim.btn':'Alright',
+'fwd.h':'Play it forward.',
+'fwd.dol':'Twenty minutes from now, if you do it:',
+'fwd.do':'The noise stops for a moment, then comes back louder with something unkind on top.',
+'fwd.dontl':"Twenty minutes from now, if you don't:",
+'fwd.dont':"The wave has passed. It always passes. You're mildly proud and slightly bored, which is what an ordinary evening feels like.",
+'fwd.close':"You're not choosing between pleasure and discipline. You're choosing between feeling worse and feeling ordinary.",
+'fwd.btn':'Ordinary, then',
+'urge.h':'Name it first.',
+'urge.p':"The trigger usually isn't want. It's needing the noise to stop. Finish this before you decide anything:",
+'urge.blank':'"I\'m not craving it.<br>I\'m ____."',
+'urge.feelings':['Overwhelmed','Lonely','Anxious','Angry','Ashamed','Exhausted','Bored','Something else'],
+'urge2.p1':"That's what you're reaching for it to fix.",
+'urge2.p2':"It won't fix it. It's a habit that outlived its own payoff.",
+'urge2.p3':'The wave passes. It always passes. Pick something to do while it does.',
+'tm.h':'Ten minutes.','tm.p':'Put the phone down. Stand up. Leave the room if you can.',
+'tm.skip':"It's passed — skip ahead",
+'rm.h':'Change the room.','rm.p1':'Not willpower. Geography.',
+'rm.p2':"The urge lives in a place — usually this one. You're not trying to defeat it. You're waiting somewhere else while it passes.",
+'rm.p3':"Kitchen. Balcony. Outside. Anywhere that isn't here. Leave the phone behind if you can.",
+'rm.btn':'Going',
+'af.h':'Still here?','af.p':"Either it's quieter or it isn't. Both are normal.",
+'af.1t':'It passed','af.1s':'Go and do something ordinary',
+'af.2t':'Still loud','af.2s':'Try another one',
+'af.3t':'I did it anyway','af.3s':'Fine. Straight to the next page.',
+'sl.h':'That cost you twenty minutes.','sl.p1':'The sentence costs the day.',
+'sl.p2':"You know the one. <i>It's ruined now, what's the point.</i> That's the part that takes the week, and it's the part you can actually stop.",
+'sl.btn':'Okay — stop the sentence',
+'sl2.h':'Say it out loud.',
+'sl2.quote':'"That happened.<br>It cost me twenty minutes.<br>Next block at ____."',
+'sl2.p':'Fill in the blank. Actually say it — out loud beats in your head.','sl2.btn':"That's my time",
+'sl3.h':'Three things before then.','sl3.p':"In this order. Tap each when it's done.",
+'sl3.1t':'Leave this room','sl3.1s':'Kitchen, balcony, outside. The room is where the loop lives.',
+'sl3.2t':'Eat something. Drink water.','sl3.2s':"You've probably done neither.",
+'sl3.3t':'Sit down at','sl3.3s':'One block. Not six. Doing it badly still counts.',
+'sl3.cant':"I can't manage a block",
+'wk.h':'Then do the small thing instead.','wk.p1':'Twenty minutes, outside.',
+'wk.p2':"That's also a real day. It counts more than a badly-sat block.",'wk.btn':'Going now',
+'sp1.h':'Too much to sort out.','sp1.p1':"That's the trigger. Every time.",
+'sp1.p2':"Overwhelm isn't a willpower problem, it's a <i>scope</i> problem. The field is too wide, so nothing can start. The only thing that touches it is making the field smaller.",
+'sp1.p3':'So: not your life. Not the year. Not even today.','sp1.btn':"What's the one next thing?",
+'sp2.h':'One thing. Small enough to be certain of.',
+'sp2.p':'Not "sort out my life." Something you could finish within the hour.',
+'sp2.ph':'The next small thing',
+'sp2.chips':['Open the lecture','Go outside','Eat properly','Tidy the desk','Shower'],
+'sp2.btn':"That's the one",
+'sp3.p1':"That's the whole list.",
+'sp3.p2':"Everything else waits until that's done. It isn't avoidance — it's the only way the field gets small enough to move in.",
+'sp3.p3':'Two blocks and sleeping on time makes this a real day. That\'s the floor, and it\'s low on purpose.',
+'sp3.btn':'Starting',
+'tr.h':'True right now, whatever kind of day this is.',
+'tr.list':['Nothing written here yet. Load your own list from the Data tab.'],
+'tr.btn':'Back',
+'end.h':"That's it.",'end.p1':"The day isn't ruined. It's a day with a bad hour in it.",
+'end.p2':'You don\'t make up for this tomorrow. Tomorrow is a normal day with its own blocks.',
+'end.btn':'Close','end.true':"Remind me what's true"};
+function X(k){const o=D.bdx||{};const v=(k in o)?o[k]:BD0[k];return v===undefined?'':v}
+function XA(k){const v=X(k);return Array.isArray(v)?v:(v?[v]:[])}
+function bdxCount(){const o=D.bdx||{};return Object.keys(o).filter(k=>k in BD0).length}
+
+let bdxOpen=0;
 let bdStack=[],bdFeel='',bdTime='',bdT=null,bdLeft=600,bdB=null,bdPh=0,bdCy=0;
 function bdStop(){clearInterval(bdT);clearInterval(bdB);bdT=bdB=null}
 function bdGo(fn,c){bdStop();bdStack.push([fn,c]);bdDraw()}
@@ -2949,38 +3054,38 @@ function bdDraw(){const [fn,c]=bdStack[bdStack.length-1];
   const a=$('#bdApp');a.innerHTML='';const d=document.createElement('div');d.className='stg';
   a.appendChild(d);fn(d)}
 function bdHome(el){
-  el.innerHTML=`<h3>What's going on right now?</h3>
-  <p>Pick the closest one. It doesn't have to be exact.</p>
+  el.innerHTML=`<h3>${X('home.h')}</h3>
+  <p>${X('home.p')}</p>
   <div class="bdo">
-    <button data-b="urge"><em>🌊</em><span>The urge is here<small>Haven't yet, but I want to</small></span></button>
-    <button data-b="slip"><em>↺</em><span>I slipped<small>Grindr, porn, hours gone</small></span></button>
-    <button data-b="spiral"><em>◍</em><span>It's all too much<small>Overwhelmed, can't start anything</small></span></button>
-    <button data-b="tools"><em>⌘</em><span>Just give me something to do<small>Breathing, the aim, other tools</small></span></button>
-    <button data-b="true"><em>✓</em><span>Remind me what's true<small>No steps, just the list</small></span></button>
+    <button data-b="urge"><em>🌊</em><span>${X('home.1t')}<small>${X('home.1s')}</small></span></button>
+    <button data-b="slip"><em>↺</em><span>${X('home.2t')}<small>${X('home.2s')}</small></span></button>
+    <button data-b="spiral"><em>◍</em><span>${X('home.3t')}<small>${X('home.3s')}</small></span></button>
+    <button data-b="tools"><em>⌘</em><span>${X('home.4t')}<small>${X('home.4s')}</small></span></button>
+    <button data-b="true"><em>✓</em><span>${X('home.5t')}<small>${X('home.5s')}</small></span></button>
   </div>`;
-  const m={urge:[bdUrge,'The urge'],slip:[bdSlip,'Slipped'],spiral:[bdSp1,'Too much'],
+  const m={urge:[bdUrge,'The urge'],slip:[bdSlip,'After'],spiral:[bdSp1,'Too much'],
            tools:[bdTools,'Tools'],true:[bdTrue,'True']};
   el.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>bdGo(...m[b.dataset.b]));}
 function bdTools(el){
-  el.innerHTML=`<h3>Something to do with your hands and lungs.</h3>
-  <p>None of these are clever. They just take the space the urge wants.</p>
+  el.innerHTML=`<h3>${X('tools.h')}</h3>
+  <p>${X('tools.p')}</p>
   <div class="bdo">
-    <button data-t="br"><em>◯</em><span>Box breathing<small>Four in, four hold, four out, four hold</small></span></button>
-    <button data-t="aim"><em>✦</em><span>What I'm aiming for<small>The actual reason</small></span></button>
-    <button data-t="fw"><em>⏩</em><span>Play it forward<small>What this looks like in twenty minutes</small></span></button>
-    <button data-t="rm"><em>⇱</em><span>Change the room<small>Geography, not willpower</small></span></button>
-    <button data-t="wt"><em>⏱</em><span>Ten minute wait<small>Just sit it out</small></span></button></div>`;
+    <button data-t="br"><em>◯</em><span>${X('tools.brt')}<small>${X('tools.brs')}</small></span></button>
+    <button data-t="aim"><em>✦</em><span>${X('tools.aimt')}<small>${X('tools.aims')}</small></span></button>
+    <button data-t="fw"><em>⏩</em><span>${X('tools.fwt')}<small>${X('tools.fws')}</small></span></button>
+    <button data-t="rm"><em>⇱</em><span>${X('tools.rmt')}<small>${X('tools.rms')}</small></span></button>
+    <button data-t="wt"><em>⏱</em><span>${X('tools.wtt')}<small>${X('tools.wts')}</small></span></button></div>`;
   const m={br:[bdBreathe,'Breathing'],aim:[bdAim,'The aim'],fw:[bdFwd,'Forward'],
            rm:[bdRoom,'Change the room'],wt:[bdTimer,'Ten minutes']};
   el.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>bdGo(...m[b.dataset.t]));}
 function bdBreathe(el){
   bdPh=0;bdCy=0;
-  el.innerHTML=`<h3 style="text-align:center;margin-bottom:2px">Box breathing</h3>
-  <p style="text-align:center;margin-bottom:8px">Follow the circle. Nose in, mouth out.</p>
+  el.innerHTML=`<h3 style="text-align:center;margin-bottom:2px">${X('br.h')}</h3>
+  <p style="text-align:center;margin-bottom:8px">${X('br.p')}</p>
   <div class="bwrap"><div class="bhalo"></div><div id="bdCirc"></div></div>
   <div class="bcue" id="bdCue">Breathe in</div>
   <p class="s2" style="text-align:center;margin-top:4px" id="bdSub">Round 1</p>
-  <button class="bdgo" id="bdFin">I'm alright</button>`;
+  <button class="bdgo" id="bdFin">${X('br.btn')}</button>`;
   const cues=[['Breathe in',2.1],['Hold',2.1],['Breathe out',1],['Hold',1]];
   const step=()=>{const c=$('#bdCirc');if(!c){bdStop();return}
     const[t,sc]=cues[bdPh];$('#bdCue').textContent=t;c.style.transform='scale('+sc+')';
@@ -2990,42 +3095,32 @@ function bdBreathe(el){
   $('#bdFin').onclick=()=>bdGo(bdAfter,'Done');}
 function bdAim(el){
   const pins=(VIS||[]).filter(v=>v.cap).slice(0,4);
-  el.innerHTML=`<h3>This is what it's for.</h3>
+  el.innerHTML=`<h3>${X('aim.h')}</h3>
   <div style="background:linear-gradient(150deg,#2A3A42,#262A2E 60%);border:1px solid var(--acb);
     border-radius:15px;padding:20px 18px;margin-bottom:14px">
-    <p style="color:var(--tx);font-size:17px;margin:0">A delightful country in Europe. Accordions,
-    and that whole feeling of joy. You, cute and jumpy and alive.</p>
-    <p style="color:var(--tx);font-size:17px;margin:11px 0 0">A pretty house. A cute car.
-    You wake up next to him. He comes back to you at night.</p>
-    <p style="color:var(--ac);font-size:15px;margin:11px 0 0">And the line you actually wrote:
-    <i>"he just has to stick with me and hold me all close to him."</i></p>
+    ${XA('aim.lines').map((l,i)=>`<p style="color:var(--tx);font-size:17px;margin:${i?'11px 0 0':'0'}">${l}</p>`).join('')}
+    ${X('aim.quote')?`<p style="color:var(--ac);font-size:15px;margin:11px 0 0">${X('aim.quote')}</p>`:''}
     ${pins.length?`<p style="color:var(--tx2);font-size:14.5px;margin:13px 0 0;
       border-top:1px solid var(--acb);padding-top:11px">From your board — ${pins.map(v=>esc(v.cap)).join(' · ')}</p>`:''}
   </div>
-  <p>None of it needs seventy-two kilos. Not the house, not the man who comes home.
-  You put the tollbooth there yourself.</p>
-  <p class="s2">Twenty minutes on your phone doesn't move you further from that.
-  Only the four hours afterwards do.</p>
-  <button class="bdgo">Alright</button>`;
+  ${X('aim.after')?`<p>${X('aim.after')}</p>`:''}
+  ${X('aim.note')?`<p class="s2">${X('aim.note')}</p>`:''}
+  <button class="bdgo">${X('aim.btn')}</button>`;
   el.querySelector('.bdgo').onclick=()=>bdGo(bdAfter,'Done');}
 function bdFwd(el){
-  el.innerHTML=`<h3>Play it forward.</h3>
-  <p class="b2">Twenty minutes from now, if you do it:</p>
-  <p>The noise stops for a moment. Then it comes back louder, with <i>I'm disgusting,
-  I've ruined the day</i> on top. You already know this — the relief has stopped arriving.</p>
-  <p class="b2">Twenty minutes from now, if you don't:</p>
-  <p>The wave has passed. It always passes. You're mildly proud and slightly bored,
-  which is what an ordinary evening feels like.</p>
-  <p class="s2">You're not choosing between pleasure and discipline. You're choosing
-  between feeling worse and feeling ordinary.</p>
-  <button class="bdgo">Ordinary, then</button>`;
+  el.innerHTML=`<h3>${X('fwd.h')}</h3>
+  <p class="b2">${X('fwd.dol')}</p>
+  <p>${X('fwd.do')}</p>
+  <p class="b2">${X('fwd.dontl')}</p>
+  <p>${X('fwd.dont')}</p>
+  <p class="s2">${X('fwd.close')}</p>
+  <button class="bdgo">${X('fwd.btn')}</button>`;
   el.querySelector('.bdgo').onclick=()=>bdGo(bdAfter,'Done');}
 function bdUrge(el){
-  el.innerHTML=`<h3>Name it first.</h3>
-  <p>The trigger isn't desire. It's needing the noise to stop. Finish this before you decide anything:</p>
-  <div class="bdq">"I'm not horny.<br>I'm ____."</div>
-  <div class="chips">${['Overwhelmed','Lonely','Scared about the exam',"Angry at something I didn't say",
-    'Ashamed','Exhausted','Bored','Something else'].map(f=>`<button class="chip">${f}</button>`).join('')}</div>
+  el.innerHTML=`<h3>${X('urge.h')}</h3>
+  <p>${X('urge.p')}</p>
+  <div class="bdq">${X('urge.blank')}</div>
+  <div class="chips">${XA('urge.feelings').map(f=>`<button class="chip">${esc(f)}</button>`).join('')}</div>
   <button class="bdgo" id="bdNx" style="opacity:.4">Next</button>`;
   el.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
     el.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
@@ -3033,30 +3128,29 @@ function bdUrge(el){
   $('#bdNx').onclick=()=>{if(bdFeel)bdGo(bdUrge2,'The urge')};}
 function bdUrge2(el){
   el.innerHTML=`<h3>${esc(bdFeel)}.</h3>
-  <p class="b2">That's what you're reaching for it to fix. Not sex.</p>
-  <p>It won't fix it. The relief has stopped coming — you feel worse straight away now.
-  It's a habit that outlived its own payoff.</p>
-  <p>The wave passes. It always passes. Pick something to do while it does.</p>
+  <p class="b2">${X('urge2.p1')}</p>
+  <p>${X('urge2.p2')}</p>
+  <p>${X('urge2.p3')}</p>
   <div class="bdo">
-    <button data-t="br"><em>◯</em><span>Breathe<small>Box breathing, a few rounds</small></span></button>
-    <button data-t="wt"><em>⏱</em><span>Wait ten minutes<small>Just sit it out</small></span></button>
-    <button data-t="fw"><em>⏩</em><span>Play it forward<small>What this looks like in twenty minutes</small></span></button>
-    <button data-t="aim"><em>✦</em><span>Remind me what it's for<small>The actual aim</small></span></button>
-    <button data-t="rm"><em>⇱</em><span>Change the room<small>Leave, phone stays</small></span></button></div>`;
+    <button data-t="br"><em>◯</em><span>Breathe<small>${X('tools.brs')}</small></span></button>
+    <button data-t="wt"><em>⏱</em><span>${X('tools.wtt')}<small>${X('tools.wts')}</small></span></button>
+    <button data-t="fw"><em>⏩</em><span>${X('tools.fwt')}<small>${X('tools.fws')}</small></span></button>
+    <button data-t="aim"><em>✦</em><span>${X('tools.aimt')}<small>${X('tools.aims')}</small></span></button>
+    <button data-t="rm"><em>⇱</em><span>${X('tools.rmt')}<small>${X('tools.rms')}</small></span></button></div>`;
   const m={br:[bdBreathe,'Breathing'],wt:[bdTimer,'Ten minutes'],fw:[bdFwd,'Forward'],
            aim:[bdAim,'The aim'],rm:[bdRoom,'Change the room']};
   el.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>bdGo(...m[b.dataset.t]));}
 function bdTimer(el){
   bdLeft=600;
-  el.innerHTML=`<h3 style="text-align:center;margin-bottom:4px">Ten minutes.</h3>
-  <p style="text-align:center">Put the phone down. Stand up. Leave the room if you can.</p>
+  el.innerHTML=`<h3 style="text-align:center;margin-bottom:4px">${X('tm.h')}</h3>
+  <p style="text-align:center">${X('tm.p')}</p>
   <div class="ring" style="margin:6px auto 16px"><svg width="190" height="190">
     <circle cx="95" cy="95" r="84" stroke="var(--s3)" stroke-width="5" fill="none"/>
     <circle id="bdArc" cx="95" cy="95" r="84" stroke="var(--ac)" stroke-width="5" fill="none"
       stroke-linecap="round" stroke-dasharray="527.8" stroke-dashoffset="0"
       style="transition:stroke-dashoffset 1s linear"/></svg>
     <div class="mid"><b id="bdCd">10:00</b><s>waiting</s></div></div>
-  <button class="btn" id="bdSk" style="width:100%">It's passed — skip ahead</button>`;
+  <button class="btn" id="bdSk" style="width:100%">${X('tm.skip')}</button>`;
   clearInterval(bdT);
   bdT=setInterval(()=>{const c=$('#bdCd');if(!c){bdStop();return}
     bdLeft--;c.textContent=Math.floor(bdLeft/60)+':'+String(bdLeft%60).padStart(2,'0');
@@ -3064,106 +3158,91 @@ function bdTimer(el){
     if(bdLeft<=0){bdStop();bdGo(bdAfter,'Done')}},1000);
   $('#bdSk').onclick=()=>bdGo(bdAfter,'Done');}
 function bdRoom(el){
-  el.innerHTML=`<h3>Change the room.</h3>
-  <p class="b2">Not willpower. Geography.</p>
-  <p>The urge lives in a place — usually this one, usually with your phone in your hand.
-  You're not trying to defeat it. You're waiting somewhere else while it passes.</p>
-  <p class="s2">Kitchen. Balcony. Outside. Anywhere that isn't here. Leave the phone behind if you can.</p>
-  <button class="bdgo">Going</button>`;
+  el.innerHTML=`<h3>${X('rm.h')}</h3>
+  <p class="b2">${X('rm.p1')}</p>
+  <p>${X('rm.p2')}</p>
+  <p class="s2">${X('rm.p3')}</p>
+  <button class="bdgo">${X('rm.btn')}</button>`;
   el.querySelector('.bdgo').onclick=()=>bdGo(bdEnd,'Done');}
 function bdAfter(el){
-  el.innerHTML=`<h3>Still here?</h3>
-  <p>Either it's quieter or it isn't. Both are normal.</p>
+  el.innerHTML=`<h3>${X('af.h')}</h3>
+  <p>${X('af.p')}</p>
   <div class="bdo">
-    <button data-a="0"><em>✓</em><span>It passed<small>Go and do something ordinary</small></span></button>
-    <button data-a="1"><em>↻</em><span>Still loud<small>Try another one</small></span></button>
-    <button data-a="2"><em>↺</em><span>I did it anyway<small>Fine. Straight to the slip page.</small></span></button></div>`;
+    <button data-a="0"><em>✓</em><span>${X('af.1t')}<small>${X('af.1s')}</small></span></button>
+    <button data-a="1"><em>↻</em><span>${X('af.2t')}<small>${X('af.2s')}</small></span></button>
+    <button data-a="2"><em>↺</em><span>${X('af.3t')}<small>${X('af.3s')}</small></span></button></div>`;
   el.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{const a=b.dataset.a;
-    if(a==='2')bdGo(bdSlip,'Slipped');else if(a==='1')bdGo(bdUrge2,'The urge');else bdGo(bdEnd,'Done')});}
+    if(a==='2')bdGo(bdSlip,'After');else if(a==='1')bdGo(bdUrge2,'The urge');else bdGo(bdEnd,'Done')});}
 function bdSlip(el){
-  el.innerHTML=`<h3>The slip cost you twenty minutes.</h3>
-  <p class="b2">The sentence costs the day.</p>
-  <p>You know the one. <i>It's ruined now, I'm useless, what's the point.</i>
-  That's the part that takes the week, and it's the part you can actually stop.</p>
-  <button class="bdgo">Okay — stop the sentence</button>`;
-  el.querySelector('.bdgo').onclick=()=>bdGo(bdSlip2,'Slipped');}
+  el.innerHTML=`<h3>${X('sl.h')}</h3>
+  <p class="b2">${X('sl.p1')}</p>
+  <p>${X('sl.p2')}</p>
+  <button class="bdgo">${X('sl.btn')}</button>`;
+  el.querySelector('.bdgo').onclick=()=>bdGo(bdSlip2,'After');}
 function bdSlip2(el){
   const n=new Date();n.setMinutes(n.getMinutes()+40);
-  el.innerHTML=`<h3>Say it out loud.</h3>
-  <div class="bdq">"That happened.<br>It cost me twenty minutes.<br>Next block at ____."</div>
-  <p>Fill in the blank. Actually say it — out loud beats in your head.</p>
+  el.innerHTML=`<h3>${X('sl2.h')}</h3>
+  <div class="bdq">${X('sl2.quote')}</div>
+  <p>${X('sl2.p')}</p>
   <input type="time" id="bdBt" value="${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}">
-  <button class="bdgo">That's my time</button>`;
-  el.querySelector('.bdgo').onclick=()=>{bdTime=$('#bdBt').value;bdGo(bdSlip3,'Slipped')};}
+  <button class="bdgo">${X('sl2.btn')}</button>`;
+  el.querySelector('.bdgo').onclick=()=>{bdTime=$('#bdBt').value;bdGo(bdSlip3,'After')};}
 function bdSlip3(el){
-  el.innerHTML=`<h3>Three things before then.</h3>
-  <p>In this order. Tap each when it's done.</p>
-  <button class="step" data-s><span class="n">1</span><span class="lb">Leave this room
-    <small>Kitchen, balcony, outside. The room is where the loop lives.</small></span></button>
-  <button class="step" data-s><span class="n">2</span><span class="lb">Eat something. Drink water.
-    <small>You've probably done neither.</small></span></button>
-  <button class="step" data-s><span class="n">3</span><span class="lb">Sit down at ${bdTime||'your time'}
-    <small>One block. Not six. Absorbing it badly still counts.</small></span></button>
+  el.innerHTML=`<h3>${X('sl3.h')}</h3>
+  <p>${X('sl3.p')}</p>
+  <button class="step" data-s><span class="n">1</span><span class="lb">${X('sl3.1t')}
+    <small>${X('sl3.1s')}</small></span></button>
+  <button class="step" data-s><span class="n">2</span><span class="lb">${X('sl3.2t')}
+    <small>${X('sl3.2s')}</small></span></button>
+  <button class="step" data-s><span class="n">3</span><span class="lb">${X('sl3.3t')} ${bdTime||'your time'}
+    <small>${X('sl3.3s')}</small></span></button>
   <button class="bdgo" id="bdDn">Done</button>
-  <button class="btn" id="bdCt" style="width:100%;margin-top:9px">I can't manage a block</button>`;
+  <button class="btn" id="bdCt" style="width:100%;margin-top:9px">${X('sl3.cant')}</button>`;
   el.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>b.classList.toggle('done'));
   $('#bdDn').onclick=()=>bdGo(bdEnd,'Done');
   $('#bdCt').onclick=()=>bdGo(bdWalk,'Instead');}
 function bdWalk(el){
-  el.innerHTML=`<h3>Then walk instead.</h3>
-  <p class="b2">Take the book. Twenty minutes, outside.</p>
-  <p>That's also a real day. The walk with your book is one of the few things you do
-  that isn't for anyone. It counts more than a badly-sat block.</p>
-  <button class="bdgo">Going now</button>`;
+  el.innerHTML=`<h3>${X('wk.h')}</h3>
+  <p class="b2">${X('wk.p1')}</p>
+  <p>${X('wk.p2')}</p>
+  <button class="bdgo">${X('wk.btn')}</button>`;
   el.querySelector('.bdgo').onclick=()=>bdGo(bdEnd,'Done');}
 function bdSp1(el){
-  el.innerHTML=`<h3>Too much to sort out.</h3>
-  <p class="b2">That's the trigger. Every time.</p>
-  <p>Overwhelm isn't a willpower problem, it's a <i>scope</i> problem. The field is too wide,
-  so nothing can start. The only thing that touches it is making the field smaller.</p>
-  <p>So: not your life. Not the ten months. Not even today.</p>
-  <button class="bdgo">What's the one next thing?</button>`;
+  el.innerHTML=`<h3>${X('sp1.h')}</h3>
+  <p class="b2">${X('sp1.p1')}</p>
+  <p>${X('sp1.p2')}</p>
+  <p>${X('sp1.p3')}</p>
+  <button class="bdgo">${X('sp1.btn')}</button>`;
   el.querySelector('.bdgo').onclick=()=>bdGo(bdSp2,'Too much');}
 function bdSp2(el){
-  el.innerHTML=`<h3>One thing. Small enough to be certain of.</h3>
-  <p>Not "sort out my life." Something you could finish within the hour.</p>
-  <input type="text" id="bdOne" placeholder="Mergers, sums 1 to 5" autocomplete="off">
-  <div class="chips">${['Open the lecture','Walk with the book','Eat properly','Tidy the desk',
-    'Half an hour with Mum','Shower'].map(f=>`<button class="chip">${f}</button>`).join('')}</div>
-  <button class="bdgo">That's the one</button>`;
+  el.innerHTML=`<h3>${X('sp2.h')}</h3>
+  <p>${X('sp2.p')}</p>
+  <input type="text" id="bdOne" placeholder="${esc(X('sp2.ph'))}" autocomplete="off">
+  <div class="chips">${XA('sp2.chips').map(f=>`<button class="chip">${esc(f)}</button>`).join('')}</div>
+  <button class="bdgo">${X('sp2.btn')}</button>`;
   el.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{$('#bdOne').value=c.textContent});
   el.querySelector('.bdgo').onclick=()=>{const v=($('#bdOne').value||'').trim()||'the next block';
     bdGo(e=>bdSp3(e,v),'Too much')};}
 function bdSp3(el,thing){
   el.innerHTML=`<h3>${esc(thing)}.</h3>
-  <p class="b2">That's the whole list.</p>
-  <p>Everything else waits until that's done. It isn't avoidance — it's the only way
-  the field gets small enough to move in.</p>
-  <p class="s2">Two blocks and sleeping on time makes this a real day. That's the floor,
-  and it's low on purpose.</p>
-  <button class="bdgo">Starting</button>`;
+  <p class="b2">${X('sp3.p1')}</p>
+  <p>${X('sp3.p2')}</p>
+  <p class="s2">${X('sp3.p3')}</p>
+  <button class="bdgo">${X('sp3.btn')}</button>`;
   el.querySelector('.bdgo').onclick=()=>bdGo(bdEnd,'Done');}
 function bdTrue(el){
-  el.innerHTML=`<h3>True right now, whatever kind of day this is.</h3>
-  <ul class="tt">
-    <li>You have never once been rejected for the diagnosis. Not a single time.</li>
-    <li>Four years of medicine, essentially unbroken. Nobody watching, nobody praising you.</li>
-    <li>He knew everything and stayed nine months.</li>
-    <li>Your best-performing month was also your best-feeling month. Not your harshest.</li>
-    <li>The slip costs twenty minutes. Only the sentence costs the day.</li>
-    <li>You don't have to be finished to be allowed to live.</li>
-  </ul>
-  <button class="bdgo">Back</button>`;
+  el.innerHTML=`<h3>${X('tr.h')}</h3>
+  <ul class="tt">${XA('tr.list').map(t=>`<li>${t}</li>`).join('')}</ul>
+  <button class="bdgo">${X('tr.btn')}</button>`;
   el.querySelector('.bdgo').onclick=()=>{bdStack=[[bdHome,'Bad day']];bdDraw()};}
 function bdEnd(el){
-  el.innerHTML=`<h3>That's it.</h3>
-  <p class="b2">The day isn't ruined. It's a day with a bad hour in it.</p>
-  <p>You don't make up for this tomorrow. Tomorrow is a normal day with its own blocks.</p>
-  <button class="bdgo" id="bdCl">Close</button>
-  <button class="btn" id="bdTr" style="width:100%;margin-top:9px">Remind me what's true</button>`;
+  el.innerHTML=`<h3>${X('end.h')}</h3>
+  <p class="b2">${X('end.p1')}</p>
+  <p>${X('end.p2')}</p>
+  <button class="bdgo" id="bdCl">${X('end.btn')}</button>
+  <button class="btn" id="bdTr" style="width:100%;margin-top:9px">${X('end.true')}</button>`;
   $('#bdCl').onclick=bdClose;
   $('#bdTr').onclick=()=>bdGo(bdTrue,'True');}
-
 /* ---- data ---- */
 function vData(){
   const el=$('#s-data'),n=daysList().filter(logged).length;
@@ -3181,6 +3260,21 @@ function vData(){
       <input type="file" id="fi" accept=".json" style="font-size:12.5px;margin-bottom:15px">
       <div class="hr"></div><div class="eyebrow" style="margin-bottom:9px">Danger zone</div>
       <button class="btn dgr" id="rst">Erase everything</button></div></div>
+  <div class="card" style="margin-top:12px">
+    <div class="rowb" style="margin-bottom:13px"><span class="eyebrow">Bad-day words — private</span>
+      <span class="pill ${bdxCount()?'p-ok':'p-nu'}">${bdxCount()?bdxCount()+' of '+Object.keys(BD0).length+' loaded':'not loaded — showing the neutral set'}</span></div>
+    <p class="mut" style="margin-bottom:14px">None of this wording lives in the app file, so nothing personal sits in your GitHub repo.
+      It rides in the encrypted sync instead. Load your file once here and it reaches your other device on the next sync.</p>
+    <input type="file" id="bdxF" accept=".json" style="font-size:12.5px;margin-bottom:12px">
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" id="bdxOut">Save a copy of what's loaded</button>
+      <button class="btn" id="bdxEd">${bdxOpen?'Hide the words':'Edit the words'}</button>
+      ${bdxCount()?`<button class="btn dgr" id="bdxClr">Clear from this device</button>`:''}</div>
+    ${bdxOpen?`<div class="hr"></div>
+      <p class="mut" style="margin-bottom:10px">Edit and it saves as you type. Lines starting with [ are lists — keep the square brackets.</p>
+      <textarea id="bdxTA" style="min-height:280px;font-family:var(--fm);font-size:12px;line-height:1.7">${esc(JSON.stringify(Object.assign({},BD0,D.bdx||{}),null,1))}</textarea>
+      <div style="display:flex;gap:8px;margin-top:10px"><button class="btn pri" id="bdxSv">Save these words</button></div>`:''}
+  </div>
   <div class="card" style="margin-top:12px"><div class="eyebrow" style="margin-bottom:13px">Sync across devices — end to end encrypted</div>
     ${SY.on?`
       <div class="rowb" style="margin-bottom:13px">
@@ -3317,6 +3411,23 @@ function vData(){
     SY={on:0,tok:'',gist:SY.gist,pass:'',imgs:0,dev:SY.dev,last:0,api:SY.api};sySave();
     try{localStorage.removeItem(BKEY);localStorage.removeItem(VBKEY)}catch(e){}syState='off';syPaint();render();
     toast('Sync off. Your data is still here.')};
+  $('#bdxF').onchange=e=>{const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=()=>{try{const o=JSON.parse(r.result);
+      if(!o||typeof o!=='object'||Array.isArray(o))throw new Error('bad shape');
+      const known=Object.keys(o).filter(k=>k in BD0);
+      if(!known.length)throw new Error('nothing recognisable in there');
+      D.bdx=Object.assign({},D.bdx||{},o);save();vData();
+      toast(`Loaded ${known.length} of ${Object.keys(BD0).length} — your words are in`)}
+      catch(x){toast('That file did not read as bad-day words')}};
+    r.readAsText(f)};
+  $('#bdxOut').onclick=()=>dl('bad-day-words.json',
+    JSON.stringify(Object.assign({},BD0,D.bdx||{}),null,1));
+  $('#bdxEd').onclick=()=>{bdxOpen=!bdxOpen;vData()};
+  if($('#bdxSv'))$('#bdxSv').onclick=()=>{try{const o=JSON.parse($('#bdxTA').value);
+    D.bdx=o;save();toast('Saved');vData()}catch(x){toast('That is not valid JSON — check the commas')}};
+  if($('#bdxClr'))$('#bdxClr').onclick=()=>{if(!confirm('Remove your wording from this device? The neutral set comes back. Keep your JSON file if you want it again.'))return;
+    D.bdx={};save();vData();toast('Cleared — neutral wording is showing')};
   $('#rst').onclick=()=>{if(!confirm('Erase every entry? This cannot be undone.'))return;
     D=blank();VIS=[];saveV();D.tab='data';save();render();toast('Everything erased')};
 }
@@ -3348,10 +3459,10 @@ function migrate(o){
   o.habits=o.habits.filter(h=>h&&h.k&&h.n).map(h=>({k:h.k,e:h.e||'◦',n:h.n,
     d:(h.d===null?null:(Array.isArray(h.d)?h.d:[0,1,2,3,4,5,6]))}));
   ['wt','mock','tasks','cards'].forEach(k=>{if(!Array.isArray(o[k]))o[k]=[]});
-  ['days','syl','mile','meals','jr','plan','grat','rev','mo','badges','ms'].forEach(k=>{
+  ['days','syl','mile','meals','jr','plan','grat','rev','mo','exc','bdx','badges','ms'].forEach(k=>{
     if(!o[k]||typeof o[k]!=='object'||Array.isArray(o[k]))o[k]={}});
   return o}
-function blank(){return{ch:{},rem:[],habits:JSON.parse(JSON.stringify(HABITS0)),days:{},syl:{},gym:[],wt:[],mock:[],mile:{},meals:{},jr:{},plan:{},grat:{},rev:{},mo:{},tasks:[],cards:[],badges:{},ms:{},name:'THE LONG GAME',tab:'dash'}}
+function blank(){return{ch:{},rem:[],habits:JSON.parse(JSON.stringify(HABITS0)),days:{},syl:{},gym:[],wt:[],mock:[],mile:{},meals:{},jr:{},plan:{},grat:{},rev:{},mo:{},exc:{},bdx:{},tasks:[],cards:[],badges:{},ms:{},name:'THE LONG GAME',tab:'dash'}}
 function csv(rows){return rows.map(r=>r.map(v=>{const s=String(v??'');
   return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}).join(',')).join('\n')}
 function dl(name,text){const b=new Blob([text],{type:'text/plain;charset=utf-8'}),u=URL.createObjectURL(b);
