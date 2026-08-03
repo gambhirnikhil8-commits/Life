@@ -5,8 +5,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="The Long Game">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%231F2225'/%3E%3Ccircle cx='90' cy='90' r='54' fill='none' stroke='%237FB0C4' stroke-width='9'/%3E%3Cpath d='M90 58v34l22 14' stroke='%238FBF9F' stroke-width='9' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.json" id="mfl">
+<link rel="icon" type="image/svg+xml" id="fvi" href="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%22512%22%20height=%22512%22%20viewBox=%220%200%20512%20512%22%3E%3Cdefs%3E%3ClinearGradient%20id=%22b%22%20x1=%220%22%20y1=%220%22%20x2=%221%22%20y2=%221%22%3E%3Cstop%20offset=%220%22%20stop-color=%22%230E1330%22/%3E%3Cstop%20offset=%221%22%20stop-color=%22%231B2547%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width=%22512%22%20height=%22512%22%20rx=%22115%22%20fill=%22url%28%23b%29%22/%3E%3Ccircle%20cx=%22256%22%20cy=%22256%22%20r=%22148%22%20fill=%22none%22%20stroke=%22%23ffffff%22%20stroke-width=%2226%22/%3E%3Ccircle%20cx=%22360%22%20cy=%22152%22%20r=%2244%22%20fill=%22%233D9BFF%22/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" id="ati" href="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%22512%22%20height=%22512%22%20viewBox=%220%200%20512%20512%22%3E%3Cdefs%3E%3ClinearGradient%20id=%22b%22%20x1=%220%22%20y1=%220%22%20x2=%221%22%20y2=%221%22%3E%3Cstop%20offset=%220%22%20stop-color=%22%230E1330%22/%3E%3Cstop%20offset=%221%22%20stop-color=%22%231B2547%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width=%22512%22%20height=%22512%22%20rx=%22115%22%20fill=%22url%28%23b%29%22/%3E%3Ccircle%20cx=%22256%22%20cy=%22256%22%20r=%22148%22%20fill=%22none%22%20stroke=%22%23ffffff%22%20stroke-width=%2226%22/%3E%3Ccircle%20cx=%22360%22%20cy=%22152%22%20r=%2244%22%20fill=%22%233D9BFF%22/%3E%3C/svg%3E">
 <title>CA Final — May 2027</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -456,6 +457,7 @@ body.phone #bdBtn{bottom:calc(86px + env(safe-area-inset-bottom))}
 <section id="s-mock"></section>
 <section id="s-jrnl"></section>
 <section id="s-rev"></section>
+<section id="s-mo"></section>
 <section id="s-data"></section>
 </div>
 <nav class="btm" id="btm"></nav>
@@ -755,7 +757,7 @@ function bedtime(d){let r=SLEEP[0][1];for(const[s,t]of SLEEP)if(d>=s)r=t;return 
 function daysList(){const o=[];for(let i=0;i<=diff(START,END);i++)o.push(addD(START,i));return o}
 function due(h,d){return h.d===null?(dnum(d)-dnum(START))%2===0:h.d.includes(wd(d))}
 
-let D={days:{},syl:{},gym:[],wt:[],mock:[],mile:{},meals:{},jr:{},plan:{},grat:{},rev:{},tasks:[],cards:[],badges:{},ms:{},name:'THE LONG GAME',tab:'dash'};
+let D={days:{},syl:{},gym:[],wt:[],mock:[],mile:{},meals:{},jr:{},plan:{},grat:{},rev:{},mo:{},tasks:[],cards:[],badges:{},ms:{},name:'THE LONG GAME',tab:'dash'};
 let VIS=[];
 function day(d){if(!D.days[d])D.days[d]={blocks:0,hours:0,topics:'',sleep:'',wake:'',steps:'',water:'',screen:'',spent:'',notes:'',sub:{},fric:[],fricNote:'',eAM:'',ePM:''};return D.days[d]}
 function syl(id){if(!D.syl[id])D.syl[id]={st:DONE0.includes(id)?'done':'ns',r1:0,r2:0,r3:0,weak:0,conf:0};return D.syl[id]}
@@ -937,7 +939,7 @@ function merge3(remote,base,local){
       for(const f in b)if(!(f in l))delete m[f];
       out[k][id]=m}
     for(const id in B)if(!(id in L))delete out[k][id]});
-  ['meals','jr','grat','rev','mile','badges','ms','ch'].forEach(k=>{
+  ['meals','jr','grat','rev','mo','mile','badges','ms','ch'].forEach(k=>{
     out[k]=out[k]||{};const L=local[k]||{},B=base[k]||{};
     for(const id in L)if(!eq(L[id],B[id]))out[k][id]=L[id];
     for(const id in B)if(!(id in L))delete out[k][id]});
@@ -1190,6 +1192,7 @@ const TABS=[['dash','Dashboard','<path d="M3 12h4l3-8 4 16 3-8h4"/>'],
 ['mock','Mocks','<path d="M3 17l5-5 4 3 6-8"/><path d="M3 21h18"/>'],
 ['jrnl','Journal','<path d="M12 20h8M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19z"/>'],
 ['rev','Review','<path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/>'],
+['mo','Audit','<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6M8.5 11.5l2 2 4-4.5"/>'],
 ['data','Data','<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>']];
 function shell(){
   $('#nav').innerHTML=TABS.map(([k,n,p])=>`<button class="nv${D.tab===k?' on':''}" data-t="${k}"><svg viewBox="0 0 24 24">${p}</svg>${n}</button>`).join('');
@@ -1210,7 +1213,7 @@ function wordmark(){
     if(v===null)return;D.name=(v.trim()||'THE LONG GAME').slice(0,22);save();wordmark();celebrateSmall()};}
 function celebrateSmall(){$$('#wm b').forEach((b,i)=>{b.style.animation='none';void b.offsetWidth;
   b.style.animation=`drop .45s ${i*0.04}s backwards`})}
-function render(){({dash:vDash,today:vToday,timer:vTimer,syl:vSyl,gym:vGym,food:vFood,task:vTask,vis:vVis,cards:vCards,mock:vMock,jrnl:vJrnl,rev:vRev,data:vData})[D.tab]()}
+function render(){({dash:vDash,today:vToday,timer:vTimer,syl:vSyl,gym:vGym,food:vFood,task:vTask,vis:vVis,cards:vCards,mock:vMock,jrnl:vJrnl,rev:vRev,mo:vMonth,data:vData})[D.tab]()}
 
 /* ---- dashboard ---- */
 function vDash(){
@@ -2585,7 +2588,8 @@ function vRev(){
     <div class="card"><div class="eyebrow" style="margin-bottom:13px">🏅 Records</div>
       ${records().map(([e,n,v,d])=>`<div class="rec"><em>${e}</em><span class="n">${n}</span>
         <span class="v">${v}</span><span class="d">${d}</span></div>`).join('')}</div>
-    <div class="card"><div class="eyebrow" style="margin-bottom:13px">Monthly milestones</div>
+    <div class="card"><div class="rowb" style="margin-bottom:13px"><span class="eyebrow">Monthly milestones</span>
+      <button class="btn sm" onclick="D.tab='mo';save();shell();render()">Monthly audit →</button></div>
       ${Object.keys(MILE).map(m=>{const on=D.mile[m],past=m<TODAY.slice(0,7),now=m===TODAY.slice(0,7);
         return `<div style="display:flex;gap:11px;padding:9px 0;border-bottom:1px solid var(--bd);align-items:flex-start">
         <button class="ck${on?' on':''}" data-m="${m}" style="margin-top:2px"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></button>
@@ -2644,6 +2648,294 @@ function shareCard(w,wins,rv){
 }
 function rr(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);
   x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
+
+/* ═══════════ monthly audit ═══════════
+   Aggregates the daily friction log into one report a month: what got in the way,
+   how often, what it seemed to cost, and whether last month's fix actually held.
+   It grades nothing. It counts things and shows you the count. */
+const MOWD=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+let moK=TODAY.slice(0,7);
+function moShift(k,n){let y=+k.slice(0,4),m=+k.slice(5,7)+n;
+  while(m>12){m-=12;y++}while(m<1){m+=12;y--}
+  return y+'-'+String(m).padStart(2,'0')}
+function moKeys(){const o=[],last=(TODAY<END?TODAY:END).slice(0,7);let k=START.slice(0,7);
+  for(let i=0;i<60&&k<=last;i++){o.push(k);k=moShift(k,1)}
+  return o.length?o:[START.slice(0,7)]}
+function moName(k,lng){return new Date(k+'-01T00:00:00')
+  .toLocaleDateString('en-IN',lng?{month:'long',year:'numeric'}:{month:'short',year:'2-digit'})}
+function moNote(k){D.mo=D.mo||{};return D.mo[k]=D.mo[k]||{fix:'',keep:'',note:''}}
+const moPc=(n,d)=>d?Math.round(n/d*100):0;
+
+function moStats(k){
+  const ds=daysList().filter(d=>d.slice(0,7)===k&&d<=TODAY),lg=ds.filter(logged);
+  const st={k,ds,lg,blocks:0,hours:0,spent:0,feyn:0,study:0,mvd:0,rest:0,sick:0,clean:0,
+    fc:{},fdays:{},notes:[],mood:{},best:null,prs:[]};
+  lg.forEach(d=>{const x=D.days[d],b=nn(x.blocks);
+    st.blocks+=b;st.hours+=nn(x.hours);st.spent+=nn(x.spent);st.feyn+=nn(x.feyn);
+    if(b>0)st.study++;
+    if(b>=2)st.mvd++;
+    if(x.rest==='rest')st.rest++;
+    if(x.rest==='sick')st.sick++;
+    if(x.mood)st.mood[x.mood]=(st.mood[x.mood]||0)+1;
+    if(!st.best||b>nn(D.days[st.best].blocks))st.best=d;
+    const f=x.fric||[];
+    if(!f.length)st.clean++;
+    f.forEach(t=>{st.fc[t]=(st.fc[t]||0)+1;(st.fdays[t]=st.fdays[t]||[]).push(d)});
+    if(x.fricNote&&x.fricNote.trim())st.notes.push([d,x.fricNote.trim()])});
+  st.rank=Object.entries(st.fc).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
+  st.chief=st.rank[0]||null;
+  st.avg=st.lg.length?st.blocks/st.lg.length:0;
+  st.gym=new Set((D.gym||[]).filter(g=>g&&g.d&&g.d.slice(0,7)===k&&g.d<=TODAY).map(g=>g.d)).size;
+  st.mocks=(D.mock||[]).filter(m=>m.d&&m.d.slice(0,7)===k&&m.d<=TODAY);
+  st.tasks=(D.tasks||[]).filter(t=>t.done&&t.doneOn&&t.doneOn.slice(0,7)===k&&t.doneOn<=TODAY).length;
+  st.jr=Object.keys(D.jr||{}).filter(d=>d.slice(0,7)===k&&(D.jr[d].win||D.jr[d].learn||D.jr[d].diary));
+  st.wins=st.jr.sort().map(d=>[d,(D.jr[d]||{}).win]).filter(z=>z[1]);
+  const sl=st.lg.filter(d=>slept(d)>0);
+  st.sleep=sl.length?sl.reduce((a,d)=>a+slept(d),0)/sl.length:0;
+  st.onTime=st.lg.filter(onTime).length;
+  const seen={};
+  (D.gym||[]).filter(g=>g&&Array.isArray(g.sets)&&g.d).sort((a,b)=>a.d<b.d?-1:1).forEach(g=>{
+    const m=Math.max(0,...g.sets.map(s=>nn(s.w)));if(!m)return;
+    const was=seen[g.ex]||0;
+    if(g.d.slice(0,7)===k&&was&&m>was)st.prs.push([g.ex,m,g.d]);
+    if(m>was)seen[g.ex]=m});
+  return st}
+
+/* what a tag seems to cost: blocks on the days it showed up, against the days it didn't */
+function moCost(st,tag){
+  const on=st.lg.filter(d=>(D.days[d].fric||[]).includes(tag)),
+        off=st.lg.filter(d=>!(D.days[d].fric||[]).includes(tag)),
+        av=a=>a.length?a.reduce((s,d)=>s+nn(D.days[d].blocks),0)/a.length:null;
+  return{on,off,bOn:av(on),bOff:av(off)}}
+
+function moText(st,pv){
+  const L=[],k=st.k,nt=moNote(k);
+  L.push('MONTHLY AUDIT — '+moName(k,1).toUpperCase());
+  L.push('Days logged: '+st.lg.length+' of '+st.ds.length);
+  L.push('Blocks '+st.blocks+' · hours '+st.hours.toFixed(1)+' · study days '+st.study
+    +' · rest '+st.rest+' · unwell '+st.sick+' · gym '+st.gym);
+  L.push('');
+  L.push('FRICTION');
+  if(st.rank.length)st.rank.forEach(([t,n])=>{
+    const p=pv?(pv.fc[t]||0):null;
+    L.push('  '+t+' — '+n+' day'+(n===1?'':'s')+' ('+moPc(n,st.lg.length)+'% of logged days)'
+      +(p!==null?'   last month '+p+' ('+moPc(p,pv.lg.length)+'%)':''))});
+  else L.push('  Nothing logged.');
+  if(st.chief){const c=moCost(st,st.chief[0]);
+    L.push('');
+    L.push('CHIEF DERAILER: '+st.chief[0]);
+    if(c.bOn!==null&&c.bOff!==null)
+      L.push('  '+c.bOn.toFixed(1)+' blocks on the days it appeared vs '+c.bOff.toFixed(1)+' on the days it did not.')}
+  if(st.notes.length){L.push('');L.push('IN YOUR OWN WORDS');
+    st.notes.forEach(([d,n])=>L.push('  '+fmt(d)+' — '+n))}
+  L.push('');L.push('WHAT WENT RIGHT');
+  L.push('  Showed up to study on '+st.study+' days; '+st.mvd+' of them were two blocks or more.');
+  if(st.best)L.push('  Biggest day: '+fmt(st.best,{weekday:'long',day:'numeric',month:'short'})+' — '+nn(D.days[st.best].blocks)+' blocks.');
+  if(st.gym)L.push('  '+st.gym+' gym sessions.');
+  st.prs.slice(0,5).forEach(([e,w,d])=>L.push('  PR — '+e+' '+w+'kg on '+fmt(d)+'.'));
+  st.wins.slice(0,8).forEach(([d,w])=>L.push('  '+fmt(d)+' — '+w));
+  if(nt.keep){L.push('');L.push('KEEPING: '+nt.keep)}
+  if(nt.fix){L.push('NEXT MONTH, REMOVING: '+nt.fix)}
+  return L.join('\n')}
+
+function vMonth(){
+  const el=$('#s-mo'),keys=moKeys();
+  if(keys.indexOf(moK)<0)moK=keys[keys.length-1];
+  const k=moK,st=moStats(k),pk=moShift(k,-1),
+        pv=keys.indexOf(pk)>=0?moStats(pk):null,nt=moNote(k);
+  const i=keys.indexOf(k);
+  const head=`<div class="rowb" style="margin-bottom:20px">
+    <div><h2>Monthly audit</h2>
+      <div class="sub" style="margin:0">${moName(k,1)} · ${st.lg.length} of ${st.ds.length} days logged${k===TODAY.slice(0,7)?' · still running':''}</div></div>
+    <div style="display:flex;gap:6px;align-items:center">
+      <button class="btn sm" id="mpv"${i<=0?' disabled':''}>←</button>
+      <select id="msel" style="width:160px">${keys.slice().reverse().map(x=>
+        `<option value="${x}"${x===k?' selected':''}>${moName(x,1)}</option>`).join('')}</select>
+      <button class="btn sm" id="mnx"${i>=keys.length-1?' disabled':''}>→</button></div></div>`;
+
+  if(!st.lg.length){
+    el.innerHTML=head+`<div class="card"><div class="empty"><b>Nothing logged in ${moName(k,1)}</b>
+      The audit builds itself out of your daily logs — blocks, rest days and the "what pulled you away" chips.
+      Log a few days and come back.</div></div>`;
+    moWire(keys);return}
+
+  /* ---- the month as a strip of days ---- */
+  const mx=Math.max(4,...st.ds.map(d=>nn((D.days[d]||{}).blocks)));
+  const strip=st.ds.map(d=>{const x=D.days[d]||{},b=nn(x.blocks),
+      c=x.rest==='sick'?'var(--ro)':x.rest?'var(--pu)':b?'var(--ac)':'var(--s3)';
+    return `<div style="flex:1;min-width:5px;height:54px;display:flex;align-items:flex-end"
+      title="${fmt(d,{weekday:'short',day:'numeric',month:'short'})} — ${b} block${b===1?'':'s'}${(x.fric||[]).length?' · '+esc((x.fric||[]).join(', ')):''}">
+      <i style="display:block;width:100%;border-radius:3px;background:${c};height:${Math.max(7,Math.round(b/mx*100))}%;opacity:${b||x.rest?1:.55}"></i></div>`}).join('');
+
+  const dl2=(l,v,n,c)=>`<div class="card stat ${c||''}" style="background:var(--s2);border:none">
+    <div class="lab">${l}</div><div class="val" style="font-size:25px">${v}</div>
+    <div class="note">${n||''}</div></div>`;
+  const vs=(cur,prev,u)=>{if(prev==null)return 'first month';
+    const d=Math.round((cur-prev)*10)/10;
+    return d===0?'same as last month':(d>0?'+':'')+d+(u||'')+' vs '+moName(moShift(k,-1))};
+
+  /* ---- chief derailer ---- */
+  let chief='';
+  if(st.chief){
+    const [tag,n]=st.chief,c=moCost(st,tag),days=st.fdays[tag]||[];
+    const wdc=[0,0,0,0,0,0,0];days.forEach(d=>wdc[wd(d)]++);
+    const wtop=wdc.indexOf(Math.max(...wdc));
+    const co={};days.forEach(d=>(D.days[d].fric||[]).forEach(t=>{if(t!==tag)co[t]=(co[t]||0)+1}));
+    const cot=Object.entries(co).sort((a,b)=>b[1]-a[1]).slice(0,3);
+    const pn=pv?(pv.fc[tag]||0):null,pr2=pv?moPc(pn,pv.lg.length):null,cr=moPc(n,st.lg.length);
+    const cost=(c.bOn!==null&&c.bOff!==null&&c.off.length)?
+      `<div class="grid g2" style="gap:10px;margin-top:14px">
+        <div class="sk" style="background:var(--rod);border-color:#4A3535"><em>📉</em><div>
+          <b>${c.bOn.toFixed(1)} blocks</b><span>average on the ${c.on.length} day${c.on.length===1?'':'s'} it showed up</span></div></div>
+        <div class="sk"><em>📈</em><div><b>${c.bOff.toFixed(1)} blocks</b>
+          <span>average on the ${c.off.length} day${c.off.length===1?'':'s'} it didn't</span></div></div></div>
+      ${c.bOff-c.bOn>0.4?`<p class="mut" style="margin-top:10px">That gap is about ${((c.bOff-c.bOn)*c.on.length).toFixed(0)} blocks across the month. Not a verdict — just the arithmetic of what this one thing sits next to.</p>`:''}`:'';
+    chief=`<div class="card" style="margin-bottom:12px;border-color:var(--acb)">
+      <div class="rowb" style="margin-bottom:4px"><span class="eyebrow">Highest friction this month</span>
+        ${pn!==null?`<span class="pill ${cr>pr2?'p-ro':cr<pr2?'p-ok':'p-nu'}">${cr}% of days · was ${pr2}%</span>`:`<span class="pill p-nu">${cr}% of logged days</span>`}</div>
+      <div style="font-size:29px;font-weight:400;letter-spacing:-.02em;margin-bottom:2px">${esc(tag)}</div>
+      <div class="mut">Logged on ${n} of your ${st.lg.length} logged days${wdc[wtop]>=3?` · most often on ${MOWD[wtop]}s (${wdc[wtop]}×)`:''}</div>
+      ${cost}
+      ${cot.length?`<div class="hr"></div><div class="eyebrow" style="margin-bottom:9px">It rarely travels alone</div>
+        <div class="chips">${cot.map(([t,v])=>`<span class="chip sq" style="cursor:default">${esc(t)}<span class="pill p-am">${v}×</span></span>`).join('')}</div>
+        <p class="mut" style="margin-top:9px">These showed up on the same days. Engineering one out often takes the others with it.</p>`:''}
+    </div>`}
+
+  /* ---- ranked friction, with movement ---- */
+  const tags=[...new Set([...Object.keys(st.fc),...(pv?Object.keys(pv.fc):[])])];
+  const rows=tags.map(t=>{const n=st.fc[t]||0,p=pv?(pv.fc[t]||0):0,
+    cr=moPc(n,st.lg.length),pr2=pv&&pv.lg.length?moPc(p,pv.lg.length):null;
+    return{t,n,p,cr,pr2,d:pr2==null?null:cr-pr2}})
+    .sort((a,b)=>b.n-a.n||a.t.localeCompare(b.t));
+  const top=Math.max(1,...rows.map(r=>r.n));
+  const bars=rows.filter(r=>r.n).map(r=>`<div class="bar">
+    <div class="t"><span>${esc(r.t)}</span><b>${r.n}d · ${r.cr}%${r.d!=null&&r.d!==0?`<span class="pill ${r.d>0?'p-ro':'p-ok'}" style="margin-left:7px">${r.d>0?'+':''}${r.d}</span>`:''}</b></div>
+    <div class="g"><i style="width:${Math.round(r.n/top*100)}%;background:${r.d!=null&&r.d>0?'var(--ro)':'var(--ac)'}"></i></div></div>`).join('');
+  const gone=rows.filter(r=>r.p&&!r.n),down=rows.filter(r=>r.n&&r.d!=null&&r.d<0);
+
+  /* ---- verdict on last month's fix ---- */
+  let held='';
+  if(pv){
+    const pf=moNote(pk).fix,pc=pv.chief;
+    if(pf||pc){
+      const t=pc?pc[0]:null,was=pc?moPc(pc[1],pv.lg.length):null,now=t?moPc(st.fc[t]||0,st.lg.length):null;
+      held=`<div class="card" style="margin-bottom:12px">
+        <div class="eyebrow" style="margin-bottom:11px">Did last month's fix hold?</div>
+        ${pf?`<div class="sk" style="margin-bottom:12px"><em>🔧</em><div><b>${esc(pf)}</b>
+          <span>what you wrote at the end of ${moName(pk,1)}</span></div></div>`:''}
+        ${t?`<div style="font-size:14px;line-height:1.7"><b>${esc(t)}</b> was ${moName(pk,1)}'s highest friction —
+          logged on ${moPc(pc[1],pv.lg.length)}% of days then, ${now}% now.
+          <span class="pill ${now>was?'p-ro':now<was?'p-ok':'p-nu'}" style="margin-left:5px">${now>was?'up':now<was?'down':'flat'} ${Math.abs(now-was)} points</span></div>
+          <p class="mut" style="margin-top:9px">${now<was?'The change did something. Keep the mechanism, not the willpower.':now>was?'It got louder, not quieter. The fix probably relied on remembering — try one that removes the choice.':'No movement. Whatever you tried was neutral; change the mechanism rather than trying harder.'}</p>`:''}
+      </div>`}}
+
+  /* ---- what went right ---- */
+  const right=[];
+  right.push(`🧱 Showed up to study on ${st.study} day${st.study===1?'':'s'}${st.mvd?` — ${st.mvd} of them two blocks or more`:''}`);
+  if(st.best&&nn(D.days[st.best].blocks))right.push(`⭐ Biggest day was ${fmt(st.best,{weekday:'long',day:'numeric',month:'short'})} at ${nn(D.days[st.best].blocks)} blocks`);
+  if(st.clean)right.push(`🪟 ${st.clean} logged day${st.clean===1?'':'s'} with no friction at all`);
+  if(st.rest)right.push(`🛌 ${st.rest} rest day${st.rest===1?'':'s'} taken on purpose`);
+  if(st.gym)right.push(`🏋️ ${st.gym} gym session${st.gym===1?'':'s'}`);
+  st.prs.slice(0,3).forEach(([e,w,d])=>right.push(`🏅 PR — ${esc(e)} at ${w}kg on ${fmt(d)}`));
+  if(st.mocks.length){const b=Math.max(...st.mocks.map(m=>Math.round(m.sc/m.mx*100)));
+    right.push(`📝 ${st.mocks.length} mock${st.mocks.length===1?'':'s'}, best ${b}%`)}
+  if(st.feyn)right.push(`🗣 ${st.feyn} Feynman review${st.feyn===1?'':'s'}`);
+  if(st.jr.length)right.push(`✍️ Journalled on ${st.jr.length} day${st.jr.length===1?'':'s'}`);
+  if(st.tasks)right.push(`🧾 ${st.tasks} life task${st.tasks===1?'':'s'} cleared`);
+  if(st.onTime)right.push(`😴 ${st.onTime} night${st.onTime===1?'':'s'} to bed on time`);
+  gone.slice(0,4).forEach(r=>right.push(`✂️ ${esc(r.t)} — ${r.p} days last month, none this month`));
+
+  const moods=Object.entries(st.mood).sort((a,b)=>b[1]-a[1]);
+
+  el.innerHTML=head+`
+  <div class="card" style="margin-bottom:12px">
+    <div class="rowb" style="margin-bottom:12px"><span class="eyebrow">Every day of the month</span>
+      <span class="mut">blue = studied · purple = rest · rose = unwell · grey = nothing logged</span></div>
+    <div style="display:flex;gap:3px;align-items:flex-end">${strip}</div>
+    <div class="hrow" style="margin-top:8px"><span>${fmt(st.ds[0],{day:'numeric',month:'short'})}</span>
+      <span>${fmt(st.ds[st.ds.length-1],{day:'numeric',month:'short'})}</span></div>
+    <div class="hr"></div>
+    <div class="grid g4">
+      ${dl2('Blocks',st.blocks,vs(st.blocks,pv?pv.blocks:null))}
+      ${dl2('Hours',st.hours.toFixed(1),vs(Math.round(st.hours*10)/10,pv?Math.round(pv.hours*10)/10:null,'h'),'c2')}
+      ${dl2('Days studied',st.study+' / '+st.ds.length,vs(st.study,pv?pv.study:null),'c3')}
+      ${dl2('Blocks per logged day',st.avg.toFixed(1),vs(Math.round(st.avg*10)/10,pv?Math.round(pv.avg*10)/10:null),'c4')}
+      ${dl2('Gym',st.gym,vs(st.gym,pv?pv.gym:null),'c5')}
+      ${dl2('Rest / unwell',st.rest+' / '+st.sick,'taken deliberately')}
+      ${dl2('Sleep',st.sleep?st.sleep.toFixed(1)+'h':'—',st.onTime?st.onTime+' nights on time':'average per night','c2')}
+      ${dl2('Spent','₹'+Math.round(st.spent),vs(st.spent,pv?pv.spent:null,''),'c3')}
+    </div>
+  </div>
+  ${chief}
+  ${held}
+  <div class="grid g2" style="align-items:start">
+    <div class="card">
+      <div class="eyebrow" style="margin-bottom:14px">Everything that pulled you away</div>
+      ${bars?`<div class="bars">${bars}</div>
+        <p class="mut" style="margin-top:12px">Days logged with each, and the share of your logged days.
+        The pill is the change in that share since ${moName(pk,1)}.</p>`
+        :'<div class="empty"><b>No friction logged</b>Either a very clean month, or the chips went untapped.</div>'}
+      ${down.length?`<div class="hr"></div><div class="eyebrow" style="margin-bottom:9px">Quieter than last month</div>
+        <div class="chips">${down.map(r=>`<span class="chip sq ok" style="cursor:default">${esc(r.t)}<span class="pill p-ok">${r.d}</span></span>`).join('')}</div>`:''}
+    </div>
+    <div class="card">
+      <div class="eyebrow" style="margin-bottom:14px">✓ What went right</div>
+      ${right.map(w=>`<div style="font-size:13.5px;padding:5px 0;color:var(--tx2)">${w}</div>`).join('')}
+      ${moods.length?`<div class="hr"></div><div class="eyebrow" style="margin-bottom:9px">How the month felt</div>
+        <div class="chips">${moods.map(([n,v])=>`<span class="chip sq" style="cursor:default">${(MOODS.find(m=>m[1]===n)||[''])[0]} ${esc(n)}<span class="pill p-nu">${v}</span></span>`).join('')}</div>`:''}
+    </div>
+  </div>
+  ${st.notes.length?`<div class="card" style="margin-top:12px">
+    <div class="eyebrow" style="margin-bottom:12px">In your own words</div>
+    ${st.notes.map(([d,n])=>`<div style="display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--bd)">
+      <span class="mut" style="width:74px;flex-shrink:0;font-family:var(--fm);font-size:11.5px">${fmt(d,{weekday:'short',day:'numeric',month:'short'})}</span>
+      <span style="font-size:13.5px;color:var(--tx2)">${esc(n)}</span></div>`).join('')}
+    <p class="mut" style="margin-top:11px">Read these in one sitting. The pattern is usually louder here than in the counts.</p></div>`:''}
+  ${st.wins.length?`<div class="card" style="margin-top:12px">
+    <div class="eyebrow" style="margin-bottom:12px">The wins you wrote down</div>
+    ${st.wins.slice(-10).map(([d,w])=>`<div style="display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--bd)">
+      <span class="mut" style="width:74px;flex-shrink:0;font-family:var(--fm);font-size:11.5px">${fmt(d,{weekday:'short',day:'numeric',month:'short'})}</span>
+      <span style="font-size:13.5px;color:var(--tx2)">${esc(w)}</span></div>`).join('')}</div>`:''}
+
+  <div class="card" style="margin-top:12px">
+    <div class="eyebrow" style="margin-bottom:14px">Engineering next month</div>
+    <div class="fld"><label>The one thing I'm removing — and the mechanism, not the intention</label>
+      <input type="text" id="mfix" value="${esc(nt.fix)}" placeholder="${st.chief?esc(st.chief[0])+': ':''}phone charges in the kitchen from 9pm. Not 'use it less'."></div>
+    <div class="fld"><label>The one thing I'm keeping</label>
+      <input type="text" id="mkeep" value="${esc(nt.keep)}" placeholder="The 6am block before anyone is awake. Every good day started there."></div>
+    <div class="fld" style="margin-bottom:0"><label>Anything else worth remembering about this month <span class="mut">optional</span></label>
+      <textarea id="mnote" placeholder="Not for the record. For the you who reads this in March.">${esc(nt.note)}</textarea></div>
+    <div style="display:flex;gap:8px;margin-top:13px;flex-wrap:wrap">
+      <button class="btn" id="mtxt">Save the audit as a text file</button></div>
+    <p class="mut" style="margin-top:10px">A fix that needs you to remember it is not a fix. Move the object, change the room, change the time.</p>
+  </div>
+
+  <div class="card pad0" style="margin-top:12px">
+    <div class="eyebrow" style="padding:0 9px 11px">Every month so far</div>
+    <table><thead><tr><th>Month</th><th>Blk</th><th>Hrs</th><th>Days</th><th>Gym</th>
+      <th style="text-align:right">Highest friction</th></tr></thead><tbody>
+    ${keys.slice().reverse().map(x=>{const s=moStats(x);
+      return `<tr${x===k?' style="background:var(--s2)"':''}><td>${moName(x,1)}</td>
+      <td style="font-family:var(--fm)">${s.blocks}</td>
+      <td style="font-family:var(--fm)">${s.hours.toFixed(1)}</td>
+      <td style="font-family:var(--fm)">${s.study}/${s.ds.length}</td>
+      <td style="font-family:var(--fm)">${s.gym}</td>
+      <td style="text-align:right">${s.chief?`${esc(s.chief[0])} <span class="pill p-nu">${moPc(s.chief[1],s.lg.length)}%</span>`:'<span class="mut">—</span>'}</td></tr>`}).join('')}
+    </tbody></table></div>`;
+
+  $('#mfix').oninput=e=>{nt.fix=e.target.value;save()};
+  $('#mkeep').oninput=e=>{nt.keep=e.target.value;save()};
+  $('#mnote').oninput=e=>{nt.note=e.target.value;save()};
+  $('#mtxt').onclick=()=>dl('audit-'+k+'.txt',moText(st,pv));
+  moWire(keys)}
+
+function moWire(keys){
+  const i=keys.indexOf(moK);
+  const go=v=>{moK=v;vMonth();if(DEV==='phone')scrollTo({top:0,behavior:'smooth'})};
+  const p=$('#mpv'),n=$('#mnx'),s=$('#msel');
+  if(p)p.onclick=()=>{if(i>0)go(keys[i-1])};
+  if(n)n.onclick=()=>{if(i<keys.length-1)go(keys[i+1])};
+  if(s)s.onchange=e=>go(e.target.value)}
 
 /* ---- bad day ---- */
 let bdStack=[],bdFeel='',bdTime='',bdT=null,bdLeft=600,bdB=null,bdPh=0,bdCy=0;
@@ -3056,15 +3348,94 @@ function migrate(o){
   o.habits=o.habits.filter(h=>h&&h.k&&h.n).map(h=>({k:h.k,e:h.e||'◦',n:h.n,
     d:(h.d===null?null:(Array.isArray(h.d)?h.d:[0,1,2,3,4,5,6]))}));
   ['wt','mock','tasks','cards'].forEach(k=>{if(!Array.isArray(o[k]))o[k]=[]});
-  ['days','syl','mile','meals','jr','plan','grat','rev','badges','ms'].forEach(k=>{
+  ['days','syl','mile','meals','jr','plan','grat','rev','mo','badges','ms'].forEach(k=>{
     if(!o[k]||typeof o[k]!=='object'||Array.isArray(o[k]))o[k]={}});
   return o}
-function blank(){return{ch:{},rem:[],habits:JSON.parse(JSON.stringify(HABITS0)),days:{},syl:{},gym:[],wt:[],mock:[],mile:{},meals:{},jr:{},plan:{},grat:{},rev:{},tasks:[],cards:[],badges:{},ms:{},name:'THE LONG GAME',tab:'dash'}}
+function blank(){return{ch:{},rem:[],habits:JSON.parse(JSON.stringify(HABITS0)),days:{},syl:{},gym:[],wt:[],mock:[],mile:{},meals:{},jr:{},plan:{},grat:{},rev:{},mo:{},tasks:[],cards:[],badges:{},ms:{},name:'THE LONG GAME',tab:'dash'}}
 function csv(rows){return rows.map(r=>r.map(v=>{const s=String(v??'');
   return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}).join(',')).join('\n')}
 function dl(name,text){const b=new Blob([text],{type:'text/plain;charset=utf-8'}),u=URL.createObjectURL(b);
   const a=document.createElement('a');a.href=u;a.download=name;a.click();
   setTimeout(()=>URL.revokeObjectURL(u),900);toast('Downloaded '+name)}
+
+/* ═══════════ app icon ═══════════
+   The home-screen icon comes from manifest.json. If that file is missing, or has
+   no icons in it, Android falls back to whatever it can find — which is how you
+   ended up with a clock. So: draw the icon here, in code, and hand Chrome a
+   manifest built on the spot. If you ever do upload a proper manifest.json with
+   icons, that one wins and none of this runs. */
+/* ═══ THE ICON ═══
+   Seven designs live below. To change the app icon, change the one word on the
+   next line to any of: orbit, rings, progress, moon, sunrise, peak, sprout.
+   Nothing else needs touching. */
+const ICON_PICK='orbit';
+
+/* The name under the icon on your home screen. APP_SHORT is the one that shows. */
+const APP_NAME='Life Tracker', APP_SHORT='Life';
+
+const ICONS={
+ orbit:{bg:['#0E1330','#1B2547'],art:
+  '<circle cx="256" cy="256" r="148" fill="none" stroke="#ffffff" stroke-width="26"/>'
+ +'<circle cx="360" cy="152" r="44" fill="#3D9BFF"/>'},
+ rings:{bg:['#0D1117','#1B2430'],art:
+  '<circle cx="256" cy="256" r="162" fill="none" stroke="#38BDF8" stroke-width="18"/>'
+ +'<circle cx="256" cy="256" r="112" fill="none" stroke="#34D399" stroke-width="18"/>'
+ +'<circle cx="256" cy="256" r="62" fill="none" stroke="#FBBF24" stroke-width="18"/>'},
+ progress:{bg:['#0F1720','#12242B'],art:
+  '<circle cx="256" cy="256" r="150" fill="none" stroke="#ffffff" stroke-opacity=".15" stroke-width="34"/>'
+ +'<circle cx="256" cy="256" r="150" fill="none" stroke="#34D399" stroke-width="34" stroke-linecap="round"'
+ +' stroke-dasharray="733 943" transform="rotate(-90 256 256)"/>'},
+ moon:{bg:['#3B2E7E','#171540'],art:
+  '<defs><mask id="mk"><rect width="512" height="512" fill="#fff"/>'
+ +'<circle cx="322" cy="200" r="126" fill="#000"/></mask></defs>'
+ +'<circle cx="240" cy="258" r="142" fill="#FFE9A8" mask="url(#mk)"/>'
+ +'<circle cx="372" cy="344" r="18" fill="#FFE9A8"/>'
+ +'<circle cx="150" cy="150" r="13" fill="#FFE9A8" opacity=".78"/>'},
+ sunrise:{bg:['#17274A','#0A0F1C'],art:
+  '<circle cx="256" cy="268" r="106" fill="#FFB454"/>'
+ +'<rect x="46" y="322" width="420" height="20" rx="10" fill="#ffffff" opacity=".85"/>'
+ +'<rect x="106" y="368" width="300" height="20" rx="10" fill="#ffffff" opacity=".42"/>'},
+ peak:{bg:['#2A2170','#0F172A'],art:
+  '<polygon points="126,372 232,178 338,372" fill="#ffffff"/>'
+ +'<polygon points="268,372 344,240 420,372" fill="#ffffff" opacity=".5"/>'
+ +'<circle cx="356" cy="152" r="32" fill="#FBBF24"/>'},
+ sprout:{bg:['#3CD18B','#0E8C8C'],art:
+  '<rect x="126" y="344" width="260" height="16" rx="8" fill="#ffffff" opacity=".45"/>'
+ +'<rect x="244" y="150" width="24" height="210" rx="12" fill="#ffffff"/>'
+ +'<ellipse cx="196" cy="250" rx="66" ry="34" fill="#ffffff" transform="rotate(28 196 250)"/>'
+ +'<ellipse cx="316" cy="198" rx="66" ry="34" fill="#ffffff" transform="rotate(-28 316 198)"/>'}};
+
+function iconSVG(mask){
+  const I=ICONS[ICON_PICK]||ICONS.orbit,p=mask?0.72:1,o=(512-512*p)/2;
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">'
+   +'<defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1">'
+   +'<stop offset="0" stop-color="'+I.bg[0]+'"/><stop offset="1" stop-color="'+I.bg[1]+'"/></linearGradient></defs>'
+   +'<rect width="512" height="512"'+(mask?'':' rx="115"')+' fill="url(#b)"/>'
+   +'<g transform="translate('+o+' '+o+') scale('+p+')">'+I.art+'</g></svg>'}
+function iconPNG(svg,size){return new Promise(res=>{const i=new Image();
+  i.onload=()=>{try{const c=document.createElement('canvas');c.width=c.height=size;
+    c.getContext('2d').drawImage(i,0,0,size,size);res(c.toDataURL('image/png'))}catch(e){res(null)}};
+  i.onerror=()=>res(null);
+  i.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)})}
+async function pwaIcon(){
+  try{
+    /* This overrides manifest.json entirely, icons and all, so index.html stays
+       the only file you ever have to touch. */
+    const [a180,a192,a512,m512]=await Promise.all(
+      [iconPNG(iconSVG(0),180),iconPNG(iconSVG(0),192),iconPNG(iconSVG(0),512),iconPNG(iconSVG(1),512)]);
+    const at=$('#ati');if(at&&a180)at.href=a180;          // iOS home screen
+    const fv=$('#fvi');if(fv)fv.href='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(iconSVG(0)); // browser tab
+    if(!a192||!a512)return;
+    const here=location.href.split('#')[0].split('?')[0],scope=here.replace(/[^/]*$/,'');
+    const mf={name:APP_NAME,short_name:APP_SHORT,description:'Study, habits, gym and life tracker',
+      id:here,start_url:here,scope,display:'standalone',orientation:'portrait',
+      background_color:'#1F2225',theme_color:'#1F2225',
+      icons:[{src:a192,sizes:'192x192',type:'image/png',purpose:'any'},
+             {src:a512,sizes:'512x512',type:'image/png',purpose:'any'},
+             {src:m512||a512,sizes:'512x512',type:'image/png',purpose:'maskable'}]};
+    const L=$('#mfl');
+    if(L)L.href=URL.createObjectURL(new Blob([JSON.stringify(mf)],{type:'application/manifest+json'}));
+  }catch(e){}}
 
 /* ---- boot ---- */
 async function legacyLoad(){
@@ -3084,7 +3455,7 @@ async function legacyLoad(){
   DONE0.forEach(id=>syl(id));
   devLoad();
   if(DEV)document.body.classList.toggle('phone',DEV==='phone');
-  shell();render();tLoad();bedTick();clockTick();remBoot();
+  shell();render();tLoad();bedTick();clockTick();remBoot();pwaIcon();
   if(!DEV)devAsk();
   syBoot()})();
 /* ═══════════ command palette ═══════════ */
@@ -3156,7 +3527,7 @@ function palRender(v){const list=palMatch(v);palI=Math.min(palI,Math.max(0,list.
     :'<div class="pi" style="color:var(--tx3);cursor:default">Nothing matches that</div>';
   $('#pl')._list=list;
   $$('#pl [data-pi]').forEach(d=>d.onclick=()=>{list[+d.dataset.pi].run();palClose()})}
-function showKeys(){toast('/ palette · [ ] tabs · g then d,t,s,y,g,f,k,v,c,m,j,r,x · syllabus: j k move, d done, i progress, f flag, 1-5 confidence · cards: space reveals, 1-4 grades · esc leaves focus mode');}
+function showKeys(){toast('/ palette · [ ] tabs · g then d,t,s,y,g,f,k,v,c,m,j,r,a,x · syllabus: j k move, d done, i progress, f flag, 1-5 confidence · cards: space reveals, 1-4 grades · esc leaves focus mode');}
 
 function cardKey(e){
   if(D.tab!=='cards'||fcMode!=='rev'||!fcCur)return false;
@@ -3170,7 +3541,7 @@ function cardKey(e){
 
 /* ═══════════ global keys ═══════════ */
 let gPending=0;
-const GOTO={d:'dash',t:'today',s:'timer',y:'syl',g:'gym',f:'food',k:'task',v:'vis',c:'cards',m:'mock',j:'jrnl',r:'rev',x:'data'};
+const GOTO={d:'dash',t:'today',s:'timer',y:'syl',g:'gym',f:'food',k:'task',v:'vis',c:'cards',m:'mock',j:'jrnl',r:'rev',a:'mo',x:'data'};
 document.addEventListener('keydown',e=>{
   const typing=e.target.matches('input,textarea,select');
   if(e.key==='Escape'){
